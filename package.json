@@ -16,14 +16,12 @@
   "sideEffects": false,
   "files": [
     "dist",
-    "registry",
-    "registry.json",
     "README.md",
     "LICENSE",
     "CHANGELOG.md"
   ],
   "scripts": {
-    "build": "node scripts/sync-registry.mjs && tsup",
+    "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
     "lint": "eslint src",
