@@ -1,0 +1,182 @@
+'use client'
+
+import { useMemo, useSyncExternalStore } from 'react'
+import {
+  type ColumnDef,
+  type ColumnFiltersState,
+  type SortingState,
+  type Table,
+  type Updater,
+  type VisibilityState,
+  getCoreRowModel,
+  getFacetedRowModel,
+  getFacetedUniqueValues,
+  getFilteredRowModel,
+  getPaginationRowModel,
+  getSortedRowModel,
+  useReactTable
+} from '@tanstack/react-table'
+
+import type { TableStateStore } from './table-state-store'
+import { createMemoryStateStore } from './stores/memory-store'
+import { createUrlStateStore } from './stores/url-store'
+import type { TableStatePatch, TableStateSnapshot } from '../types/table-state'
+import { DEFAULT_TABLE_STATE, mergeTableState } from '../types/table-state'
+import { useResolvedTableConfig } from '../config/use-resolved-config'
+import type { TableConfig, TableConfigInput } from '../types/table-config'
+
+export interface UseTableCraftOptions<TData, TValue = unknown> {
+  data: TData[]
+  columns: ColumnDef<TData, TValue>[]
+  /** State-storage backend. Defaults to `config.store`, or a lazily-created URL/memory store. */
+  store?: TableStateStore
+  /** Fully controlled state, like TanStack's own `state` option. Mutually exclusive with `store`. */
+  state?: Partial<TableStateSnapshot>
+  /** Required alongside `state` for controlled mode — receives the next full snapshot. */
+  onStateChange?: (next: TableStateSnapshot) => void
+  /** Data-processing axis: is pagination computed server-side? Independent of where state lives. */
+  manualPagination?: boolean
+  manualSorting?: boolean
+  manualFiltering?: boolean
+  /** Total row count for manual pagination (used to compute `pageCount`). */
+  rowCount?: number
+  /** Instance layer of the 4-layer config cascade (defaults -> provider -> instance -> plugins). */
+  config?: TableConfigInput
+  getRowId?: (row: TData) => string
+}
+
+export interface UseTableCraftResult<TData> {
+  table: Table<TData>
+  state: TableStateSnapshot
+  config: TableConfig
+  setPage(pageIndex: number): void
+  setPageSize(size: number): void
+  setSorting(updater: Updater<SortingState>): void
+  setColumnFilter(id: string, value: unknown): void
+  setGlobalFilter(value: string): void
+  clearFilters(): void
+}
+
+function resolveUpdater<T>(updater: Updater<T>, current: T): T {
+  return typeof updater === 'function' ? (updater as (old: T) => T)(current) : updater
+}
+
+/**
+ * The headless core of another-table-craft: owns the single `useReactTable()` call and
+ * exposes state + handlers, fully decoupled from any specific state-storage mechanism
+ * (URL, memory, or a fully controlled parent) and from any presentation layer.
+ *
+ * This is the direct fix for the original library's biggest architectural flaw, where
+ * `useReactTable()` and inline URL-sync `useEffect`s were fused into one 780-line
+ * `DataTable` component.
+ */
+export function useTableCraft<TData, TValue = unknown>(
+  options: UseTableCraftOptions<TData, TValue>
+): UseTableCraftResult<TData> {
+  const config = useResolvedTableConfig(options.config)
+  const isControlled = options.state !== undefined || options.onStateChange !== undefined
+
+  // Always constructed and always subscribed to (even in controlled mode) so hook call
+  // order never depends on a prop that's expected to stay constant across a call site's
+  // lifetime — see the Rules of Hooks note in the class doc above.
+  const defaultStore = useMemo<TableStateStore>(() => {
+    if (options.store) return options.store
+    if (config.store) return config.store
+    return typeof window !== 'undefined' ? createUrlStateStore() : createMemoryStateStore()
+  }, [options.store, config.store])
+
+  const storeSnapshot = useSyncExternalStore(
+    defaultStore.subscribe,
+    defaultStore.getSnapshot,
+    defaultStore.getServerSnapshot ?? defaultStore.getSnapshot
+  )
+
+  const state: TableStateSnapshot = isControlled
+    ? mergeTableState(DEFAULT_TABLE_STATE, options.state ?? {})
+    : storeSnapshot
+
+  function applyPatch(patch: TableStatePatch, patchOptions?: { resetPage?: boolean }): void {
+    if (isControlled) {
+      const next = mergeTableState(state, patch)
+      options.onStateChange?.(
+        patchOptions?.resetPage ? { ...next, pagination: { ...next.pagination, pageIndex: 0 } } : next
+      )
+    } else {
+      defaultStore.setState(patch, patchOptions)
+    }
+  }
+
+  const table = useReactTable({
+    data: options.data,
+    columns: options.columns,
+    state: {
+      pagination: state.pagination,
+      sorting: state.sorting as SortingState,
+      columnFilters: state.columnFilters as ColumnFiltersState,
+      globalFilter: state.globalFilter,
+      columnVisibility: state.columnVisibility as VisibilityState
+    },
+    manualPagination: options.manualPagination,
+    manualSorting: options.manualSorting,
+    manualFiltering: options.manualFiltering,
+    pageCount:
+      options.manualPagination && options.rowCount !== undefined
+        ? Math.max(1, Math.ceil(options.rowCount / Math.max(1, state.pagination.pageSize)))
+        : undefined,
+    getRowId: options.getRowId,
+    onPaginationChange: (updater) => {
+      const next = resolveUpdater(updater, state.pagination)
+      applyPatch({ pagination: next }, { resetPage: next.pageSize !== state.pagination.pageSize })
+    },
+    onSortingChange: (updater) => {
+      const next = resolveUpdater(updater, state.sorting as SortingState)
+      applyPatch({ sorting: next as TableStateSnapshot['sorting'] }, { resetPage: true })
+    },
+    onColumnFiltersChange: (updater) => {
+      const next = resolveUpdater(updater, state.columnFilters as ColumnFiltersState)
+      applyPatch({ columnFilters: next as TableStateSnapshot['columnFilters'] }, { resetPage: true })
+    },
+    onGlobalFilterChange: (updater) => {
+      const next = resolveUpdater(updater as Updater<string>, state.globalFilter)
+      applyPatch({ globalFilter: next }, { resetPage: true })
+    },
+    onColumnVisibilityChange: (updater) => {
+      const next = resolveUpdater(updater, state.columnVisibility as VisibilityState)
+      applyPatch({ columnVisibility: next })
+    },
+    getCoreRowModel: getCoreRowModel(),
+    getPaginationRowModel: options.manualPagination ? undefined : getPaginationRowModel(),
+    getSortedRowModel: options.manualSorting ? undefined : getSortedRowModel(),
+    getFilteredRowModel: options.manualFiltering ? undefined : getFilteredRowModel(),
+    getFacetedRowModel: getFacetedRowModel(),
+    getFacetedUniqueValues: getFacetedUniqueValues()
+  })
+
+  return {
+    table,
+    state,
+    config,
+    setPage(pageIndex) {
+      applyPatch({ pagination: { ...state.pagination, pageIndex } })
+    },
+    setPageSize(size) {
+      applyPatch({ pagination: { ...state.pagination, pageSize: size } }, { resetPage: true })
+    },
+    setSorting(updater) {
+      const next = resolveUpdater(updater, state.sorting as SortingState)
+      applyPatch({ sorting: next as TableStateSnapshot['sorting'] }, { resetPage: true })
+    },
+    setColumnFilter(id, value) {
+      const others = state.columnFilters.filter((filter) => filter.id !== id)
+      const isEmpty = value === undefined || value === '' || (Array.isArray(value) && value.length === 0)
+      const next = isEmpty ? others : [...others, { id, value }]
+      applyPatch({ columnFilters: next }, { resetPage: true })
+    },
+    setGlobalFilter(value) {
+      applyPatch({ globalFilter: value }, { resetPage: true })
+    },
+    clearFilters() {
+      applyPatch({ columnFilters: [], globalFilter: '' }, { resetPage: true })
+    }
+  }
+}
