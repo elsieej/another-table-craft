@@ -21,14 +21,15 @@ function TooltipContent({
   sideOffset = 4,
   children,
   ...props
-}: ComponentProps<typeof TooltipPrimitive.Popup> & { sideOffset?: number }) {
+}: ComponentProps<typeof TooltipPrimitive.Popup> &
+  Pick<ComponentProps<typeof TooltipPrimitive.Positioner>, 'sideOffset'>) {
   return (
     <TooltipPrimitive.Portal>
-      <TooltipPrimitive.Positioner sideOffset={sideOffset}>
+      <TooltipPrimitive.Positioner className='z-50' sideOffset={sideOffset}>
         <TooltipPrimitive.Popup
           data-slot='tooltip-content'
           className={cn(
-            'z-50 w-fit text-balance rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground',
+            'w-fit text-balance rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground',
             className
           )}
           {...props}
