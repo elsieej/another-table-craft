@@ -1,0 +1,40 @@
+---
+sidebar_position: 3
+sidebar_label: Controlled state mode
+---
+
+import ControlledStateTableExample from '@site/src/components/showcases/ControlledStateTableExample'
+
+# Controlled state mode
+
+Instead of a `store`, pass `state` and `onStateChange` directly, and `useTableCraft` becomes fully controlled —
+exactly like a controlled `<input>`. It never persists anything anywhere; it just reads back whatever state you
+hand it and calls `onStateChange` when something inside the table wants to change it.
+
+<ControlledStateTableExample />
+
+The raw JSON below the table is this page's own component state (a plain `useState`) — sort a column or change
+page and watch it update in real time. Whatever store `useTableCraft` would otherwise reach for is constructed
+internally but never read from or written to in controlled mode; the table is exactly as stateful as its
+parent lets it be.
+
+```tsx
+import { useState } from 'react'
+import { useTableCraft, DEFAULT_TABLE_STATE, type TableStateSnapshot } from 'another-table-craft'
+
+function ControlledTable({ data, columns }) {
+  const [state, setState] = useState<TableStateSnapshot>(DEFAULT_TABLE_STATE)
+  const { table } = useTableCraft({ data, columns, state, onStateChange: setState })
+  // ...render `table` however you like
+}
+```
+
+## When to reach for controlled mode
+
+Reach for `store` (a memory store or the default URL store) when you just want a working table and don't care
+where its state physically lives. Reach for `state`/`onStateChange` when something _else_ already owns that
+state and the table needs to plug into it — syncing with an external state manager, combining table state with
+other page state in one reducer, or driving the table from test fixtures.
+
+`store` and `state`/`onStateChange` are mutually exclusive: passing `state` or `onStateChange` at all switches
+`useTableCraft` into controlled mode, and any `store` you also passed is simply never touched.
