@@ -1,3 +1,4 @@
+import { logger } from '../lib/logger'
 import type { TableConfig } from '../types/table-config'
 
 /**
@@ -11,29 +12,27 @@ export function runDevValidation(config: TableConfig): void {
   // Pagination sanity: defaultPageSize should be in pageSizeOptions
   if (!isFinite(config.pagination.defaultPageSize)) return
   if (!config.pagination.pageSizeOptions.includes(config.pagination.defaultPageSize)) {
-    console.warn(
-      `[another-table-craft] defaultPageSize (${config.pagination.defaultPageSize}) is not in pageSizeOptions [${config.pagination.pageSizeOptions.join(', ')}]. The page size dropdown may not show the default selection.`
+    logger.warn(
+      `defaultPageSize (${config.pagination.defaultPageSize}) is not in pageSizeOptions [${config.pagination.pageSizeOptions.join(', ')}]. The page size dropdown may not show the default selection.`
     )
   }
 
   // Search sanity: debounceMs should be non-negative
   if (config.search.debounceMs < 0) {
-    console.warn(
-      `[another-table-craft] search.debounceMs is negative (${config.search.debounceMs}). This will be treated as 0.`
-    )
+    logger.warn(`search.debounceMs is negative (${config.search.debounceMs}). This will be treated as 0.`)
   }
 
   // Feature flag conflict: advancedFilter requires filter
   if (config.features.advancedFilter && !config.features.filter) {
-    console.warn(
-      `[another-table-craft] features.advancedFilter is enabled but features.filter is disabled. Advanced filter will have no effect.`
+    logger.warn(
+      'features.advancedFilter is enabled but features.filter is disabled. Advanced filter will have no effect.'
     )
   }
 
   // i18n: direction 'auto' with no locale hint
   if (config.i18n.direction === 'auto' && !config.i18n.locale) {
-    console.warn(
-      `[another-table-craft] i18n.direction is 'auto' but i18n.locale is empty. Direction detection may not work correctly. Set an explicit direction or locale.`
+    logger.warn(
+      "i18n.direction is 'auto' but i18n.locale is empty. Direction detection may not work correctly. Set an explicit direction or locale."
     )
   }
 }

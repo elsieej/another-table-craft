@@ -1,5 +1,6 @@
 import { Table } from '@tanstack/react-table'
 import { download, generateCsv, mkConfig } from 'export-to-csv'
+import { logger } from './logger'
 
 interface CsvExportOptions {
   fileName?: string
@@ -53,6 +54,6 @@ export function exportSelectedRowsCsv<TData>(table: Table<TData>, options: CsvEx
     const csv = generateCsv(csvConfig)(tableData)
     download(csvConfig)(csv)
   } catch (error) {
-    console.error('CSV export failed:', error)
+    logger.error('CSV export failed:', error)
   }
 }
