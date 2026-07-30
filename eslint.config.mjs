@@ -5,7 +5,7 @@ import tseslint from 'typescript-eslint'
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
-  { ignores: ['demo/dist/**', 'packages/table-craft/dist/**'] },
+  { ignores: ['website/build/**', 'website/.docusaurus/**', 'packages/table-craft/dist/**'] },
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {

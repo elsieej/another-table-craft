@@ -2,7 +2,7 @@
 
 A production-ready, SPA-first React data table system built on [TanStack Table](https://tanstack.com/table), with query-param state as a first-class default and [Base UI](https://base-ui.com/) presentation primitives.
 
-**[Live demo →](https://elsieej.github.io/another-table-craft/)** — a basic table, query-param state syncing to the URL, the config cascade, and CSV export, all against the real published package.
+**[Docs & live showcases →](https://elsieej.github.io/another-table-craft/)** — a Docusaurus site growing into a walkthrough of every real, working capability of the library, each as a live embedded example against the real published package.
 
 ## Features
 
@@ -67,7 +67,7 @@ By default, `useTableCraft` reads and writes pagination/sorting/filter state to 
 
 ## Project structure
 
-This is an npm-workspaces monorepo: the published library lives in its own package, alongside a demo app that consumes it like any other consumer would.
+This is an npm-workspaces monorepo: the published library lives in its own package, alongside a docs site that consumes it like any other consumer would.
 
 ```
 packages/table-craft/    # The published "another-table-craft" package
@@ -84,8 +84,11 @@ packages/table-craft/    # The published "another-table-craft" package
 │   └── styles/           # Tailwind v4 theme tokens
 └── dist/                 # Build output (gitignored)
 
-demo/                     # A Vite + React app demonstrating the library
-└── src/
+website/                  # Docusaurus docs site — deployed as the live demo/showcase.
+│                         # Named "website", not "docs", because docs/ at the repo root
+│                         # already holds agent-facing project docs (see docs/agents/).
+├── docs/                 # Getting started + one live-embedded showcase page per feature
+└── src/components/showcases/  # The React components each showcase page embeds
 ```
 
 ## Contributing

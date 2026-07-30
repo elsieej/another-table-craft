@@ -1,0 +1,81 @@
+---
+sidebar_position: 1
+---
+
+import BasicTableExample from '@site/src/components/showcases/BasicTableExample'
+
+# Getting started
+
+**another-table-craft** is a production-ready, SPA-first React data table system built on
+[TanStack Table](https://tanstack.com/table), with query-param state as a first-class default and
+[Base UI](https://base-ui.com/) presentation primitives.
+
+Every page in this section is a real, live example — the table you see rendered on the page is the actual
+library, not a screenshot or a simulation.
+
+## Install
+
+```bash
+npm install another-table-craft @tanstack/react-table
+```
+
+`react` and `react-dom` (>=19) are peer dependencies.
+
+## A minimal table
+
+```tsx
+import { useTableCraft } from 'another-table-craft'
+import { flexRender, type ColumnDef } from '@tanstack/react-table'
+
+interface Person {
+  id: string
+  name: string
+}
+
+const columns: ColumnDef<Person>[] = [
+  { accessorKey: 'id', header: 'ID' },
+  { accessorKey: 'name', header: 'Name' }
+]
+
+function PeopleTable({ data }: { data: Person[] }) {
+  const { table } = useTableCraft({ data, columns })
+
+  return (
+    <table>
+      <thead>
+        {table.getHeaderGroups().map((headerGroup) => (
+          <tr key={headerGroup.id}>
+            {headerGroup.headers.map((header) => (
+              <th key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</th>
+            ))}
+          </tr>
+        ))}
+      </thead>
+      <tbody>
+        {table.getRowModel().rows.map((row) => (
+          <tr key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <td key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</td>
+            ))}
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+```
+
+By default, `useTableCraft` reads and writes pagination/sorting/filter state to the URL's query string in the
+browser (falling back to an in-memory store during SSR). Pass a `store` (e.g. `createMemoryStateStore()`) or a
+fully controlled `state`/`onStateChange` pair to opt out.
+
+Here's that same hook, live, wired to an in-memory store so it doesn't touch this page's own URL:
+
+<BasicTableExample />
+
+## Where to next
+
+This section is growing into a full showcase of every real, working capability of the library — state
+stores, filters and their URL serializers, the config cascade and plugin system, server-side (manual) mode,
+i18n/RTL, and CSV export — each as its own live page, plus a deliberately honest known-limitations & roadmap
+page. Check the sidebar for what's landed so far.

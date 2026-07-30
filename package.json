@@ -7,13 +7,13 @@
   },
   "workspaces": [
     "packages/*",
-    "demo"
+    "website"
   ],
   "scripts": {
     "build": "npm run build --workspace=packages/table-craft",
     "dev": "npm run dev --workspace=packages/table-craft",
-    "typecheck": "npm run typecheck --workspace=packages/table-craft",
-    "lint": "eslint packages/table-craft/src demo/src",
+    "typecheck": "npm run typecheck --workspace=packages/table-craft && npm run typecheck --workspace=website",
+    "lint": "eslint packages/table-craft/src website/src",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "npm run test --workspace=packages/table-craft",

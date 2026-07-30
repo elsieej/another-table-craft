@@ -1,6 +1,6 @@
 version: 2
 updates:
-  # This repo is an npm-workspaces monorepo (packages/table-craft, demo) sharing a
+  # This repo is an npm-workspaces monorepo (packages/table-craft, website) sharing a
   # single root-level lockfile — one entry pointed at the workspace root covers the
   # whole dependency tree.
   - package-ecosystem: 'npm'
