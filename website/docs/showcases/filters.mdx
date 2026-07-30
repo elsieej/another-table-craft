@@ -1,0 +1,35 @@
+---
+sidebar_position: 5
+sidebar_label: Global & column filters
+---
+
+import FiltersExample from '@site/src/components/showcases/FiltersExample'
+
+# Global & column filters
+
+`useTableCraft` exposes both a single global filter (searches every column at once) and independent per-column
+filters, side by side — the same underlying TanStack Table filtering, just wired through the same state
+snapshot as everything else.
+
+<FiltersExample />
+
+Type into the search box and watch rows narrow to matches across name, email, and role. Then pick a role from
+the dropdown — that filter narrows independently of whatever's in the search box, and the two combine with
+AND, not OR: search "grace" with role set to "Researcher" and you'll get zero rows, because Grace Hopper's
+actual role is Engineer. Switch the role back to "Engineer" (or "All roles") and she reappears.
+
+```tsx
+const { table, state, setGlobalFilter, setColumnFilter } = useTableCraft({ data, columns })
+
+// Global filter -- matches across every column
+setGlobalFilter('ada')
+
+// Per-column filter -- matches only the named column
+setColumnFilter('role', 'Engineer')
+
+// Clear a column filter
+setColumnFilter('role', undefined)
+```
+
+Both flow through the same `TableStateSnapshot`, so they get URL-synced, reset-to-page-1-on-change, and
+cleared-together (via `clearFilters()`) for free, exactly like every other piece of table state.
