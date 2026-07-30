@@ -29,6 +29,8 @@ jobs:
       - run: npm run build --workspace=packages/table-craft
 
       - run: npm run build --workspace=demo
+        env:
+          BASE_PATH: /another-table-craft/
 
       - uses: actions/configure-pages@v5
 
