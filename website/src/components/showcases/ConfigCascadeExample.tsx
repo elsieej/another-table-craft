@@ -34,10 +34,10 @@ function DefaultsTable(): ReactNode {
 }
 
 function ProviderOnlyTable(): ReactNode {
-  // config.pagination.defaultPageSize is never auto-applied to actual table state --
-  // useTableCraft's default store always starts at DEFAULT_TABLE_STATE's hardcoded
-  // pageSize (10) regardless of config. Matching the provider's defaultPageSize (3) here
-  // is this component manually keeping the two in sync, not something the cascade does.
+  // useTableCraft does seed a default store's page size from config.pagination.defaultPageSize
+  // -- but only when no explicit `store` is passed. This table needs its own explicit store
+  // anyway (so it and InstanceOverrideTable can show two different current page sizes at
+  // once), so we still match the provider's defaultPageSize (3) here by hand.
   const store = useMemo(() => createMemoryStateStore({ pagination: { pageIndex: 0, pageSize: 3 } }), [])
   const { table, config } = useTableCraft({ data: people, columns, store })
 

@@ -6,26 +6,37 @@ sidebar_label: Known limitations & roadmap
 # Known limitations & roadmap
 
 Every other page in this section shows something real and working. This page is the deliberately honest
-counterpart: what's declared in the API but doesn't do what its name implies, tracked as a real GitHub issue
+counterpart: what's declared in the API but doesn't do what its name implies, tracked as real GitHub issues
 rather than swept under the rug. It exists to serve two purposes — confirming what's actually safe to rely on
 today, and seeding ideas for what to build next.
 
-## `TableConfig.pagination`/`search`/`filter` aren't wired into the default store
+## No open gaps right now
 
-`useTableCraft`'s default store construction calls `createUrlStateStore()` with **no arguments** — even though
-`config.pagination.defaultPageSize`, `config.search.debounceMs`, and `config.filter.defaultSerializer` share
-the exact same names as `createUrlStateStore`'s own `defaultPageSize`, `debounceMs`, and `defaultSerializer`
-options. Setting any of these on `TableConfig` has no effect on a table's actual behavior; every showcase on
-this site that needed to demonstrate a non-default page size or serializer had to read the value back out of
-`config` and pass it into its own store construction by hand — the same workaround a real consumer would need
-today.
+Building this docs site surfaced four real gaps between what the library declares and what it actually does.
+All four have since been fixed:
 
-Tracked in [#59](https://github.com/elsieej/another-table-craft/issues/59).
+- Most `TableConfig.features` flags were declared but never enforced — resolved by documenting them plainly as
+  consumer hints ([#42](https://github.com/elsieej/another-table-craft/issues/42)), matching what the
+  [config cascade showcase](./config-cascade) already demonstrated for `sorting`.
+- `ResolvedTableConfigContext` was structurally unreachable in real usage — resolved by removing it and its
+  dead fallback branches ([#41](https://github.com/elsieej/another-table-craft/issues/41)); `useTableConfig()`
+  and `useTableTranslations()` now simply always read the global/provider config.
+- `createCsvConfig` hardcoded the CSV delimiter — resolved by exposing `fieldSeparator` through
+  `CsvExportOptions` ([#58](https://github.com/elsieej/another-table-craft/issues/58)), demonstrated on the
+  [CSV export custom config showcase](./csv-export-custom-config).
+- `TableConfig.pagination.defaultPageSize`/`filter.defaultSerializer` weren't wired into the default store —
+  resolved by threading both into `useTableCraft`'s own default-store construction
+  ([#59](https://github.com/elsieej/another-table-craft/issues/59)). `search.debounceMs` was deliberately left
+  as a consumer hint instead — it turned out to be a different concept (your own search input's debounce)
+  that only coincidentally shared a name with the URL store's write-debounce timing.
+
+This section stays here, empty, on purpose: the point of this page isn't a permanent record of what's broken,
+it's an honest snapshot of what's safe to rely on _right now_. If a future showcase surfaces a new gap, it
+goes here until it's resolved too.
 
 ## Ideas for next
 
-Distinct from the gap above — not filed issues yet, just things this initiative surfaced as plausible next
-steps:
+Not filed as issues yet — just things this initiative surfaced as plausible next steps:
 
 - **Export the Base UI presentation primitives.** `components/ui/` holds a full set of table-adjacent
   components (button, card, table, dropdown menu, and more), but none of them are exported through the

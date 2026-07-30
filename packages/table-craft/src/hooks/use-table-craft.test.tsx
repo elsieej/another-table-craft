@@ -1,8 +1,9 @@
-import { describe, expect, it, vi } from 'vitest'
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useTableCraft } from './use-table-craft'
 import { createMemoryStateStore } from '../core/stores/memory-store'
+import { commaSeparated } from '../core/serializers/filter-serializers'
 import type { TableStateSnapshot } from '../types/table-state'
 
 interface Row {
@@ -87,6 +88,48 @@ describe('useTableCraft (uncontrolled, memory store)', () => {
       result.current.setColumnFilter('name', undefined)
     })
     expect(result.current.state.columnFilters).toHaveLength(0)
+  })
+})
+
+describe('useTableCraft (default store, config wiring)', () => {
+  // jsdom always defines `window`, so the default-store branch under test here is always
+  // createUrlStateStore(...) -- this also gives the wiring's most realistic coverage,
+  // since a real browser hits this exact branch too.
+  function resetLocation() {
+    window.history.replaceState({}, '', '/')
+  }
+
+  beforeEach(() => {
+    resetLocation()
+  })
+
+  afterEach(() => {
+    vi.useRealTimers()
+    resetLocation()
+  })
+
+  it('seeds the default page size from config.pagination.defaultPageSize when no store is passed', () => {
+    const { result } = renderHook(() =>
+      useTableCraft({ data, columns, config: { pagination: { defaultPageSize: 25 } } })
+    )
+
+    expect(result.current.state.pagination.pageSize).toBe(25)
+  })
+
+  it('passes config.filter.defaultSerializer through to the default URL store', () => {
+    vi.useFakeTimers()
+    const { result } = renderHook(() =>
+      useTableCraft({ data, columns, config: { filter: { defaultSerializer: commaSeparated } } })
+    )
+
+    act(() => {
+      result.current.setColumnFilter('name', ['alice', 'bob'])
+    })
+    act(() => {
+      vi.advanceTimersByTime(300)
+    })
+
+    expect(window.location.search).toContain('name=alice%2Cbob')
   })
 })
 

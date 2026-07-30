@@ -50,23 +50,34 @@ export interface TableFeatureFlags {
 
 /** Pagination configuration. */
 export interface TablePaginationConfig {
-  /** Available page size options in the dropdown. */
+  /** Available page size options in the dropdown -- a consumer hint; the library doesn't
+   * render a dropdown itself. */
   pageSizeOptions: number[]
-  /** Default number of rows per page. */
+  /** Default number of rows per page. Seeds `useTableCraft`'s default store (both the
+   * memory store's initial page size and the URL store's own `defaultPageSize` option)
+   * when no explicit `store` is passed. */
   defaultPageSize: number
 }
 
-/** Search configuration. */
+/** Search configuration -- both fields are consumer hints for your own search input's
+ * behavior (pair naturally with the exported `useDebounce` hook); `useTableCraft` doesn't
+ * read either one itself. */
 export interface TableSearchConfig {
-  /** Debounce delay in milliseconds for search input. */
+  /** Suggested debounce delay, in milliseconds, before your own search input calls
+   * `setGlobalFilter`. Not the same knob as `createUrlStateStore`'s `debounceMs` (which
+   * debounces the URL *write* after state already changed, for any kind of state change,
+   * not specifically search) -- despite the similar name, this isn't wired into it. */
   debounceMs: number
-  /** Minimum number of characters before search triggers. */
+  /** Suggested minimum character count before your own search input should trigger a
+   * search. */
   minSearchLength: number
 }
 
 /** Filter configuration (URL serialization for filterable columns). */
 export interface TableFilterConfig {
-  /** Default serializer for filter array values. Used when column has no serializer override. */
+  /** Default serializer for filter array values, used when a column has no serializer
+   * override. Passed through to `useTableCraft`'s default URL store when no explicit
+   * `store` is given -- see `createUrlStateStore`'s own `defaultSerializer` option. */
   defaultSerializer: FilterSerializer
 }
 

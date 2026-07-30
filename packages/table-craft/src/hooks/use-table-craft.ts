@@ -48,8 +48,14 @@ export function useTableCraft<TData, TValue = unknown>(
   const defaultStore = useMemo<TableStateStore>(() => {
     if (options.store) return options.store
     if (config.store) return config.store
-    return typeof window !== 'undefined' ? createUrlStateStore() : createMemoryStateStore()
-  }, [options.store, config.store])
+    if (typeof window !== 'undefined') {
+      return createUrlStateStore({
+        defaultPageSize: config.pagination.defaultPageSize,
+        defaultSerializer: config.filter.defaultSerializer
+      })
+    }
+    return createMemoryStateStore({ pagination: { pageIndex: 0, pageSize: config.pagination.defaultPageSize } })
+  }, [options.store, config.store, config.pagination.defaultPageSize, config.filter.defaultSerializer])
 
   const storeSnapshot = useSyncExternalStore(
     defaultStore.subscribe,

@@ -29,11 +29,12 @@ the "Resolved:" line under each table: table 3's `defaultPageSize` (6) wins over
 overrides what it actually sets.
 
 :::note
-`config.pagination.defaultPageSize` isn't automatically applied to a table's actual page size —
-`useTableCraft`'s default store always starts at a hardcoded page size (10) regardless of config. The 3-
-and 6-row page sizes you see in tables 2 and 3 come from this demo manually seeding each table's store to
-match its own `defaultPageSize`, not from the cascade doing it for you. If you want config to drive the
-initial page size, read it back (as this demo does) and pass it into your own store.
+`config.pagination.defaultPageSize` does seed `useTableCraft`'s own default store now — but only when no
+`store` is passed at all. Every table on this page passes its own explicit `store` (so that three different
+tables, each needing a genuinely different current page size, can all be visible on this one page
+simultaneously without fighting over a single default). That's why this demo still reads `defaultPageSize`
+back and seeds each store manually — not because the wiring doesn't exist, but because explicit stores always
+take priority over it, same as any other `store` option.
 :::
 
 ## Sorting is a consumer hint, not an enforced feature
