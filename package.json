@@ -1,6 +1,9 @@
 {
   "name": "another-table-craft",
   "version": "0.1.0",
+  "engines": {
+    "node": ">=20"
+  },
   "description": "A production-ready, SPA-first React data table system built on TanStack Table, with query-param state as a first-class default and Base UI presentation primitives.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
