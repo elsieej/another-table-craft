@@ -1,10 +1,12 @@
 import { useState } from 'react'
 import BasicTable from './showcases/BasicTable'
 import QueryParamShowcase from './showcases/QueryParamShowcase'
+import ConfigCascadeShowcase from './showcases/ConfigCascadeShowcase'
 
 const TABS = [
   { id: 'basic', label: 'Basic table', Component: BasicTable },
-  { id: 'query-param', label: 'Query-param state', Component: QueryParamShowcase }
+  { id: 'query-param', label: 'Query-param state', Component: QueryParamShowcase },
+  { id: 'config-cascade', label: 'Config cascade', Component: ConfigCascadeShowcase }
 ] as const
 
 function App() {
@@ -12,7 +14,7 @@ function App() {
   const Active = TABS.find((tab) => tab.id === activeTab)?.Component ?? BasicTable
 
   return (
-    <main style={{ fontFamily: 'sans-serif', maxWidth: 720, margin: '2rem auto', padding: '0 1rem' }}>
+    <main style={{ fontFamily: 'sans-serif', maxWidth: 960, margin: '2rem auto', padding: '0 1rem' }}>
       <h1>another-table-craft demo</h1>
 
       <nav style={{ display: 'flex', gap: '0.5rem', marginBottom: '1.5rem' }}>
