@@ -1,0 +1,53 @@
+---
+sidebar_position: 7
+sidebar_label: Config cascade
+---
+
+import ConfigCascadeExample from '@site/src/components/showcases/ConfigCascadeExample'
+
+# Config cascade
+
+Table config resolves through four layers, each able to override the one before it:
+
+1. **Defaults** — `DEFAULT_TABLE_CONFIG`, baked into the library.
+2. **Provider** — whatever a `<TableProvider config={...}>` ancestor sets.
+3. **Instance** — the `config` option passed to a specific `useTableCraft` call.
+4. **Plugins** — `TablePlugin`s registered on the config, applied in priority order (its own showcase).
+
+Each layer only needs to set the fields it cares about; anything it doesn't touch falls through to the layer
+below.
+
+<ConfigCascadeExample />
+
+All three tables above share the same 12 rows. Table 1 has no `TableProvider` ancestor and no instance
+config, so it resolves straight to the library's defaults (`pageSizeOptions: [10, 20, 30, 40, 50]`,
+`defaultPageSize: 10`). Tables 2 and 3 both sit inside one `<TableProvider config={{ pagination: {
+pageSizeOptions: [3, 6, 9], defaultPageSize: 3 }, features: { sorting: false } }}>` — table 2 takes that as-is,
+while table 3 additionally passes its own instance `config={{ pagination: { defaultPageSize: 6 } }}`. Compare
+the "Resolved:" line under each table: table 3's `defaultPageSize` (6) wins over the provider's (3), while its
+`pageSizeOptions` and `features.sorting` still come from the provider unchanged — an instance override only
+overrides what it actually sets.
+
+:::note
+`config.pagination.defaultPageSize` isn't automatically applied to a table's actual page size —
+`useTableCraft`'s default store always starts at a hardcoded page size (10) regardless of config. The 3-
+and 6-row page sizes you see in tables 2 and 3 come from this demo manually seeding each table's store to
+match its own `defaultPageSize`, not from the cascade doing it for you. If you want config to drive the
+initial page size, read it back (as this demo does) and pass it into your own store.
+:::
+
+## Sorting is a consumer hint, not an enforced feature
+
+Notice tables 2 and 3 render _plain, unclickable_ column headers instead of the sort buttons in table 1. The
+library itself doesn't disable sorting when `features.sorting` is `false` — `useTableCraft` always wires up
+full TanStack sorting regardless of that flag. This page's own `SortableDataTable` component reads
+`config.features.sorting` and renders a button-with-`aria-sort` or a plain `<span>` accordingly:
+
+```tsx
+const { table, config } = useTableCraft({ data, columns, /* ... */ })
+
+<SortableDataTable table={table} sortable={config.features.sorting} />
+```
+
+Every flag on `TableConfig.features` works this way today — none of them are enforced by the library itself,
+`sorting` is just the one this page happens to demonstrate. See the known limitations page for the full list.

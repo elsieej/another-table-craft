@@ -1,7 +1,12 @@
 import { flexRender, type Table } from '@tanstack/react-table'
 
-/** Shared table markup every showcase embeds: sortable headers (button + aria-sort) and rows. */
-export function SortableDataTable<TData>({ table }: { table: Table<TData> }) {
+/**
+ * Shared table markup every showcase embeds: sortable headers (button + aria-sort) and rows.
+ * `sortable` defaults to true; pass false to render plain header text with no sort affordance
+ * at all -- e.g. when gating on `config.features.sorting`, which the library itself doesn't
+ * enforce (see the config-cascade showcase and the known-limitations page).
+ */
+export function SortableDataTable<TData>({ table, sortable = true }: { table: Table<TData>; sortable?: boolean }) {
   return (
     <table style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
@@ -9,31 +14,44 @@ export function SortableDataTable<TData>({ table }: { table: Table<TData> }) {
           <tr key={headerGroup.id}>
             {headerGroup.headers.map((header) => {
               const sortDirection = header.column.getIsSorted()
+              const headerLabel = flexRender(header.column.columnDef.header, header.getContext())
               return (
                 <th
                   key={header.id}
-                  aria-sort={sortDirection === 'asc' ? 'ascending' : sortDirection === 'desc' ? 'descending' : 'none'}
+                  aria-sort={
+                    sortable
+                      ? sortDirection === 'asc'
+                        ? 'ascending'
+                        : sortDirection === 'desc'
+                          ? 'descending'
+                          : 'none'
+                      : undefined
+                  }
                   style={{
                     textAlign: 'left',
                     borderBottom: '2px solid var(--ifm-color-emphasis-400)',
                     padding: '0.5rem'
                   }}
                 >
-                  <button
-                    onClick={header.column.getToggleSortingHandler()}
-                    style={{
-                      background: 'none',
-                      border: 'none',
-                      padding: 0,
-                      font: 'inherit',
-                      color: 'inherit',
-                      cursor: 'pointer',
-                      fontWeight: 'bold'
-                    }}
-                  >
-                    {flexRender(header.column.columnDef.header, header.getContext())}
-                    {sortDirection === 'asc' ? ' ▲' : sortDirection === 'desc' ? ' ▼' : ''}
-                  </button>
+                  {sortable ? (
+                    <button
+                      onClick={header.column.getToggleSortingHandler()}
+                      style={{
+                        background: 'none',
+                        border: 'none',
+                        padding: 0,
+                        font: 'inherit',
+                        color: 'inherit',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {headerLabel}
+                      {sortDirection === 'asc' ? ' ▲' : sortDirection === 'desc' ? ' ▼' : ''}
+                    </button>
+                  ) : (
+                    <span style={{ fontWeight: 'bold' }}>{headerLabel}</span>
+                  )}
                 </th>
               )
             })}
