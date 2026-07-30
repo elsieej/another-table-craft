@@ -7,7 +7,6 @@ import { DEFAULT_TABLE_CONFIG } from './defaults'
 import { deepMergeConfig } from './merge'
 
 const TableConfigContext = createContext<TableConfig | null>(null)
-const ResolvedTableConfigContext = createContext<TableConfig | null>(null)
 
 interface TableProviderProps {
   config: TableConfigInput
@@ -32,13 +31,3 @@ export function useGlobalTableConfig(): TableConfig {
   const context = useContext(TableConfigContext)
   return context ?? DEFAULT_TABLE_CONFIG
 }
-
-/**
- * Returns the fully resolved config (all 4 layers) when inside a useTableCraft render tree,
- * or null if called outside of one.
- */
-export function useResolvedTableConfigContext(): TableConfig | null {
-  return useContext(ResolvedTableConfigContext)
-}
-
-export { ResolvedTableConfigContext }

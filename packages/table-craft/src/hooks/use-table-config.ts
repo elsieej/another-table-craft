@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import type { TableConfig } from '../types/table-config'
-import { useGlobalTableConfig, useResolvedTableConfigContext } from '../config/context'
+import { useGlobalTableConfig } from '../config/context'
 
 /**
  * Consumer hook for reading the resolved table config.
@@ -11,15 +11,14 @@ import { useGlobalTableConfig, useResolvedTableConfigContext } from '../config/c
  * - `useTableConfig()` — returns the full config object
  * - `useTableConfig(selector)` — returns a derived slice (prevents unnecessary re-renders)
  *
- * Inside a useTableCraft render tree → returns the fully resolved instance config (all 4 layers).
- * Outside → returns the global/provider config (Layer 1+2).
+ * Returns the global/provider config (Layers 1+2) — a `useTableCraft` call's own
+ * instance/plugin overrides (Layers 3+4) aren't visible here; read `config` from that call's
+ * own return value instead if you need the fully-resolved result inside its render tree.
  */
 export function useTableConfig(): TableConfig
 export function useTableConfig<T>(selector: (config: TableConfig) => T): T
 export function useTableConfig<T>(selector?: (config: TableConfig) => T): TableConfig | T {
-  const resolvedFromContext = useResolvedTableConfigContext()
-  const globalConfig = useGlobalTableConfig()
-  const config = resolvedFromContext ?? globalConfig
+  const config = useGlobalTableConfig()
 
   return useMemo(() => {
     if (selector) return selector(config)

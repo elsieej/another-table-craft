@@ -1,8 +1,7 @@
 import { renderHook } from '@testing-library/react'
 import { describe, expect, it } from 'vitest'
 import { useTableTranslations } from './use-table-translations'
-import { withProviderAndResolvedConfig, withTableProviderConfig } from '../config/test-helpers'
-import { DEFAULT_TABLE_CONFIG } from '../config/defaults'
+import { withTableProviderConfig } from '../config/test-helpers'
 
 describe('useTableTranslations', () => {
   it('returns the built-in English strings for known keys outside any provider', () => {
@@ -22,21 +21,5 @@ describe('useTableTranslations', () => {
     const { result } = renderHook(() => useTableTranslations(), { wrapper })
 
     expect(result.current('search')).toBe('custom:search')
-  })
-
-  it('prefers the resolved-context translationFn over the provider one when inside a useTableCraft tree', () => {
-    // Both layers set a translationFn — resolved-context must win.
-    const resolvedConfig = {
-      ...DEFAULT_TABLE_CONFIG,
-      i18n: { ...DEFAULT_TABLE_CONFIG.i18n, translationFn: (key: string) => `resolved:${key}` }
-    }
-    const wrapper = withProviderAndResolvedConfig(
-      { i18n: { translationFn: (key: string) => `provider:${key}` } },
-      resolvedConfig
-    )
-
-    const { result } = renderHook(() => useTableTranslations(), { wrapper })
-
-    expect(result.current('search')).toBe('resolved:search')
   })
 })

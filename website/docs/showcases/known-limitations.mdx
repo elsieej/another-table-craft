@@ -6,25 +6,9 @@ sidebar_label: Known limitations & roadmap
 # Known limitations & roadmap
 
 Every other page in this section shows something real and working. This page is the deliberately honest
-counterpart: what's declared in the API but doesn't do what its name implies, tracked as real GitHub issues
+counterpart: what's declared in the API but doesn't do what its name implies, tracked as a real GitHub issue
 rather than swept under the rug. It exists to serve two purposes — confirming what's actually safe to rely on
 today, and seeding ideas for what to build next.
-
-## `ResolvedTableConfigContext` is never reachable in real usage
-
-`useTableConfig()` and `useTableTranslations()` are documented as seeing the fully-resolved config (all four
-cascade layers, including instance-level overrides) when called "inside a `useTableCraft` render tree." In
-practice, that path is structurally unreachable: `useTableCraft` is a hook, not a component, so it has no JSX
-children to wrap in a context provider. The only place `ResolvedTableConfigContext.Provider` is ever rendered
-in this codebase is a test helper.
-
-The consequence, demonstrated directly in the [i18n & RTL showcase](./i18n-rtl): passing `translationFn` or
-`direction` as **instance-level** `config` to `useTableCraft` is invisible to `useTableTranslations()`/
-`useTableConfig()` called anywhere else — only `TableProvider` (which does establish a real context) actually
-reaches them. Every showcase on this site that needed provider-visible config used `TableProvider` for exactly
-this reason.
-
-Tracked in [#41](https://github.com/elsieej/another-table-craft/issues/41).
 
 ## `TableConfig.pagination`/`search`/`filter` aren't wired into the default store
 
@@ -40,7 +24,7 @@ Tracked in [#59](https://github.com/elsieej/another-table-craft/issues/59).
 
 ## Ideas for next
 
-Distinct from the gaps above — not filed issues yet, just things this initiative surfaced as plausible next
+Distinct from the gap above — not filed issues yet, just things this initiative surfaced as plausible next
 steps:
 
 - **Export the Base UI presentation primitives.** `components/ui/` holds a full set of table-adjacent

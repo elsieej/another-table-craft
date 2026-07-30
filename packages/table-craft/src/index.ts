@@ -18,7 +18,6 @@ export {
   createTableConfig,
   TableProvider,
   useGlobalTableConfig,
-  useResolvedTableConfigContext,
   useResolvedTableConfig,
   useTableConfig
 } from './config'

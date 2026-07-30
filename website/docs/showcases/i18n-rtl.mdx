@@ -36,10 +36,9 @@ Inside `MyTable`, `const t = useTableTranslations()` returns the Spanish strings
 first table above use. Keys the dictionary doesn't cover fall through to the key itself, not a crash.
 
 :::note
-`useTableTranslations()` (like `useTableConfig()`) only sees config set at the **defaults or provider** layer,
-not instance-level `config` passed directly to a specific `useTableCraft` call — a known gap tracked as a
-project issue. Setting `translationFn`/`direction` via `TableProvider`, as this page does, sidesteps it
-entirely.
+`useTableTranslations()` (like `useTableConfig()`) only ever sees config set at the **defaults or provider**
+layer, by design — not instance-level `config` passed directly to a specific `useTableCraft` call. If you need
+`translationFn`/`direction` reachable from these hooks, set them via `TableProvider`, as this page does.
 :::
 
 ## `direction: 'rtl'`

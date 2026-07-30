@@ -1,6 +1,6 @@
 'use client'
 
-import { useGlobalTableConfig, useResolvedTableConfigContext } from '../config/context'
+import { useGlobalTableConfig } from '../config/context'
 
 /**
  * Built-in default English translation strings.
@@ -87,13 +87,12 @@ const DEFAULT_TRANSLATIONS: Record<string, string> = {
 /**
  * Translation hook for table components.
  *
- * If config provides a custom `translationFn`, uses that.
- * Otherwise falls back to built-in English strings.
+ * If config provides a custom `translationFn`, uses that. Otherwise falls back to built-in
+ * English strings. Reads from the global/provider config (Layers 1+2) -- see useTableConfig's
+ * doc comment for why instance-level (Layer 3) translationFn isn't visible here.
  */
 export function useTableTranslations(): (key: string) => string {
-  const globalConfig = useGlobalTableConfig()
-  const resolvedConfig = useResolvedTableConfigContext()
-  const config = resolvedConfig ?? globalConfig
+  const config = useGlobalTableConfig()
 
   if (config.i18n.translationFn) {
     return config.i18n.translationFn
