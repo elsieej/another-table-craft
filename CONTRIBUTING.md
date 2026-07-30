@@ -14,16 +14,16 @@ Node 20+ is recommended. All scripts below are run from the repo root — they d
 
 ## Development scripts
 
-| Script                 | What it does                                                  |
-| ---------------------- | ------------------------------------------------------------- |
-| `npm run dev`          | Builds the library in watch mode                              |
-| `npm run typecheck`    | Runs `tsc` across both `packages/table-craft` and `website`   |
-| `npm run lint`         | Runs ESLint over `packages/table-craft/src` and `website/src` |
-| `npm run format`       | Formats the repo with Prettier                                |
-| `npm run format:check` | Checks formatting without writing                             |
-| `npm test`             | Runs the Vitest suite once                                    |
-| `npm run test:watch`   | Runs Vitest in watch mode                                     |
-| `npm run build`        | Builds the publishable package with tsup                      |
+| Script                 | What it does                                                                                       |
+| ---------------------- | -------------------------------------------------------------------------------------------------- |
+| `npm run dev`          | Builds the library in watch mode                                                                   |
+| `npm run typecheck`    | Runs `tsc` for the library, builds it, then runs `tsc` for `website` (which needs the built types) |
+| `npm run lint`         | Runs ESLint over `packages/table-craft/src` and `website/src`                                      |
+| `npm run format`       | Formats the repo with Prettier                                                                     |
+| `npm run format:check` | Checks formatting without writing                                                                  |
+| `npm test`             | Runs the Vitest suite once                                                                         |
+| `npm run test:watch`   | Runs Vitest in watch mode                                                                          |
+| `npm run build`        | Builds the publishable package with tsup                                                           |
 
 Before opening a pull request, make sure all of these pass:
 
