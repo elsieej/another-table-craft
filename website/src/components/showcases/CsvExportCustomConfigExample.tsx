@@ -4,7 +4,7 @@ import { createMemoryStateStore, exportSelectedRowsCsv, useTableCraft } from 'an
 import { people, type Person } from '../../data/people'
 import { PaginationControls, SortableDataTable } from './SortableDataTable'
 
-const EXPORT_OPTIONS = { fileName: 'selected-people', ignoredCols: ['role'] }
+const EXPORT_OPTIONS = { fileName: 'selected-people', ignoredCols: ['role'], fieldSeparator: ';' }
 
 const columns: ColumnDef<Person>[] = [
   {
@@ -40,7 +40,8 @@ export default function CsvExportCustomConfigExample(): ReactNode {
     <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
       <p style={{ marginTop: 0 }}>
         Role is visible in the table below, but excluded from the export -- watch for it missing from the downloaded
-        CSV's columns.
+        CSV's columns. The download is also semicolon-separated, not comma-separated -- open it in a text editor to see
+        fields joined with <code>;</code> instead of <code>,</code>.
       </p>
       <SortableDataTable table={table} sortable={false} />
       <PaginationControls table={table} />

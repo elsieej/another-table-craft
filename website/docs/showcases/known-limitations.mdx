@@ -53,15 +53,6 @@ today.
 
 Tracked in [#59](https://github.com/elsieej/another-table-craft/issues/59).
 
-## `createCsvConfig` hardcodes the CSV delimiter
-
-The [CSV export custom config showcase](./csv-export-custom-config) covers this one directly: the underlying
-`export-to-csv` package supports a configurable `fieldSeparator`, but `createCsvConfig` hardcodes it to `,` and
-never exposes it through `CsvExportOptions`. There's currently no way to get a semicolon- or tab-separated
-export without bypassing this library's CSV helpers entirely.
-
-Tracked in [#58](https://github.com/elsieej/another-table-craft/issues/58).
-
 ## Ideas for next
 
 Distinct from the gaps above — not filed issues yet, just things this initiative surfaced as plausible next
@@ -75,6 +66,7 @@ steps:
   selection as ephemeral UI state (a deliberate, correct design choice) — but that leaves "how do I keep a
   user's selection across a page reload if I actually want to" entirely unanswered. A short recipe, not
   necessarily a code change, would close that gap.
-- **Broader `export-to-csv` option pass-through.** Once `fieldSeparator` lands (#58), the same option-passing
-  gap likely applies to other real `export-to-csv` options this library doesn't expose yet — `quoteStrings`,
+- **Broader `export-to-csv` option pass-through.** Now that `fieldSeparator` is exposed (see the
+  [CSV export custom config showcase](./csv-export-custom-config)), the same option-passing gap likely applies
+  to other real `export-to-csv` options this library still doesn't expose — `quoteStrings`,
   `showColumnHeaders`, `columnHeaders`, and a few others.

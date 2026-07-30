@@ -5,13 +5,15 @@ import { logger } from './logger'
 interface CsvExportOptions {
   fileName?: string
   ignoredCols?: string[]
+  /** Defaults to ',' */
+  fieldSeparator?: string
 }
 
 const DEFAULT_IGNORED_COLUMNS = ['actions', 'select']
 
 export function createCsvConfig(options: CsvExportOptions = {}) {
   return mkConfig({
-    fieldSeparator: ',',
+    fieldSeparator: options.fieldSeparator || ',',
     decimalSeparator: '.',
     useKeysAsHeaders: true,
     filename: options.fileName || 'table-export'

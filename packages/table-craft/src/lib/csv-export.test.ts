@@ -63,6 +63,14 @@ describe('createCsvConfig', () => {
   it('uses a custom filename when provided', () => {
     expect(createCsvConfig({ fileName: 'my-rows' }).filename).toBe('my-rows')
   })
+
+  it('defaults the field separator to ","', () => {
+    expect(createCsvConfig().fieldSeparator).toBe(',')
+  })
+
+  it('uses a custom field separator when provided', () => {
+    expect(createCsvConfig({ fieldSeparator: ';' }).fieldSeparator).toBe(';')
+  })
 })
 
 describe('exportSelectedRowsCsv', () => {
@@ -91,6 +99,16 @@ describe('exportSelectedRowsCsv', () => {
     expect(csv).toContain('Alice')
     expect(csv).not.toMatch(/edit/)
     expect(csv).not.toContain('checkbox')
+  })
+
+  it('passes a custom fieldSeparator through to the generated CSV output', () => {
+    const table = buildTable({ '1': true })
+    exportSelectedRowsCsv(table, { fieldSeparator: ';' })
+
+    expect(innerDownloadSpy).toHaveBeenCalledTimes(1)
+    const csv = String(innerDownloadSpy.mock.calls[0][0])
+    expect(csv).toContain(';')
+    expect(csv.split('\r\n')[0]).not.toContain(',')
   })
 
   it('also excludes caller-supplied ignoredCols on top of the defaults', () => {

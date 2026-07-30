@@ -8,30 +8,34 @@ import CsvExportCustomConfigExample from '@site/src/components/showcases/CsvExpo
 # CSV export: custom config
 
 `exportSelectedRowsCsv`'s second argument and `createCsvConfig` both accept the same options object, letting
-you override the filename and which columns get excluded from the default export shown on the previous page.
+you override the filename, which columns get excluded, and the field separator, all relative to the default
+export shown on the previous page.
 
 <CsvExportCustomConfigExample />
 
-This table's export call passes both options at once:
+This table's export call passes all three options at once:
 
 ```tsx
 exportSelectedRowsCsv(table, {
   fileName: 'selected-people', // -> downloads selected-people.csv, not table-export.csv
-  ignoredCols: ['role'] // -> role is dropped from the CSV, on top of the built-in select/actions
+  ignoredCols: ['role'], // -> role is dropped from the CSV, on top of the built-in select/actions
+  fieldSeparator: ';' // -> fields joined with ; instead of the default ,
 })
 ```
 
-Select some rows and export — the download is named `selected-people.csv`, and even though **Role** is
-visibly rendered in the table, it never appears as a column in the file.
+Select some rows and export — the download is named `selected-people.csv`, **Role** is visibly rendered in the
+table but never appears as a column in the file, and the fields inside are joined with `;` rather than `,`.
 
 ## What's actually configurable
 
 The options object both `exportSelectedRowsCsv`'s second argument and `createCsvConfig` accept (internally
-typed as `CsvExportOptions`, not currently exported for consumers to import) has exactly two fields:
+typed as `CsvExportOptions`, not currently exported for consumers to import) has three fields:
 
 - **`fileName`** — replaces the default `table-export` filename entirely.
 - **`ignoredCols`** — column ids to exclude **in addition to** the built-in `select`/`actions` exclusions. This
   is additive only: there's no way to un-ignore `select` or `actions` through this option.
+- **`fieldSeparator`** — the delimiter joining fields in the generated CSV. Defaults to `,`; pass `;` or `\t`
+  for a semicolon- or tab-separated export.
 
 Everything else about the export (which rows, header derivation, empty-value handling — see the previous page)
 is fixed behavior, not configurable through either function.
@@ -40,10 +44,3 @@ is fixed behavior, not configurable through either function.
 pipeline (from the `export-to-csv` package) directly, without going through `exportSelectedRowsCsv`'s
 row-selection assumption at all — useful if you want to export something other than "whatever's currently
 selected."
-
-:::note
-The `export-to-csv` library this is built on supports a configurable `fieldSeparator` (for a semicolon- or
-tab-separated export, say) — but `another-table-craft`'s own `createCsvConfig` hardcodes it to `,` and doesn't
-expose it through `CsvExportOptions`. There's currently no way to get a non-comma-delimited export without
-bypassing this library's CSV helpers and calling `export-to-csv` directly. Tracked as a project issue.
-:::
