@@ -7,7 +7,7 @@ A production-ready, SPA-first React data table system built on [TanStack Table](
 - **Headless core** — `useTableCraft` owns the single `useReactTable()` call and exposes state + handlers, fully decoupled from any specific state-storage mechanism or presentation layer.
 - **Query-param state by default** — a zero-dependency URL-backed store (`createUrlStateStore`) syncs pagination, sorting, filters, and view mode to the URL via the native History API, so table state survives a refresh or a shared link without any setup.
 - **Config cascade** — a 4-layer config system (defaults → provider → instance → plugins) lets you set sane global defaults once and override them per table instance.
-- **Presentation primitives** — `packages/table-craft/src/components/ui/` holds a full set of table-adjacent primitives (button, card, table, dialog-like drawer, dropdown menu, select, calendar, and more) built on Base UI. These are not currently exported through the package's public API surface.
+- **Presentation primitives** — `src/components/ui/` holds a full set of table-adjacent primitives (button, card, table, dialog-like drawer, dropdown menu, select, calendar, and more) built on Base UI. These are not currently exported through the package's public API surface.
 
 ## Install
 
@@ -65,25 +65,18 @@ By default, `useTableCraft` reads and writes pagination/sorting/filter state to 
 
 ## Project structure
 
-This is an npm-workspaces monorepo: the published library lives in its own package, alongside a demo app that consumes it like any other consumer would.
-
 ```
-packages/table-craft/    # The published "another-table-craft" package
-├── src/
-│   ├── index.ts          # Public package entry point
-│   ├── hooks/            # use-*.ts React hooks (useTableCraft, useTableConfig, useDebounce, ...)
-│   ├── core/             # Headless state-storage implementations and serializers
-│   │   ├── stores/       # createUrlStateStore, createMemoryStateStore
-│   │   └── serializers/  # Column-filter <-> query-string serializers
-│   ├── config/           # The 4-layer config cascade (defaults, provider, merge, dev warnings)
-│   ├── types/            # Shared TypeScript types, re-exported from types/index.ts
-│   ├── components/ui/    # Base UI-based presentation primitives
-│   ├── lib/              # Small standalone utilities (cn, CSV export, logger)
-│   └── styles/           # Tailwind v4 theme tokens
-└── dist/                 # Build output (gitignored)
-
-demo/                     # A Vite + React app demonstrating the library
-└── src/
+src/
+├── index.ts          # Public package entry point
+├── hooks/            # use-*.ts React hooks (useTableCraft, useTableConfig, useDebounce, ...)
+├── core/             # Headless state-storage implementations and serializers
+│   ├── stores/       # createUrlStateStore, createMemoryStateStore
+│   └── serializers/  # Column-filter <-> query-string serializers
+├── config/           # The 4-layer config cascade (defaults, provider, merge, dev warnings)
+├── types/            # Shared TypeScript types, re-exported from types/index.ts
+├── components/ui/    # Base UI-based presentation primitives
+├── lib/              # Small standalone utilities (cn, CSV export, logger)
+└── styles/           # Tailwind v4 theme tokens
 ```
 
 ## Contributing

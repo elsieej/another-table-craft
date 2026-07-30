@@ -4,24 +4,26 @@ Thanks for considering a contribution to another-table-craft.
 
 ## Setup
 
+This is an npm-workspaces monorepo: the published library lives in `packages/table-craft/`, and `demo/` is a Vite app that consumes it like any other package. A single `npm install` at the repo root sets up both.
+
 ```bash
 npm install
 ```
 
-Node 20+ is recommended.
+Node 20+ is recommended. All scripts below are run from the repo root — they delegate to the right workspace package.
 
 ## Development scripts
 
-| Script                 | What it does                             |
-| ---------------------- | ---------------------------------------- |
-| `npm run dev`          | Builds the library in watch mode         |
-| `npm run typecheck`    | Runs `tsc --noEmit`                      |
-| `npm run lint`         | Runs ESLint over `src/`                  |
-| `npm run format`       | Formats the repo with Prettier           |
-| `npm run format:check` | Checks formatting without writing        |
-| `npm test`             | Runs the Vitest suite once               |
-| `npm run test:watch`   | Runs Vitest in watch mode                |
-| `npm run build`        | Builds the publishable package with tsup |
+| Script                 | What it does                                               |
+| ---------------------- | ---------------------------------------------------------- |
+| `npm run dev`          | Builds the library in watch mode                           |
+| `npm run typecheck`    | Runs `tsc --noEmit`                                        |
+| `npm run lint`         | Runs ESLint over `packages/table-craft/src` and `demo/src` |
+| `npm run format`       | Formats the repo with Prettier                             |
+| `npm run format:check` | Checks formatting without writing                          |
+| `npm test`             | Runs the Vitest suite once                                 |
+| `npm run test:watch`   | Runs Vitest in watch mode                                  |
+| `npm run build`        | Builds the publishable package with tsup                   |
 
 Before opening a pull request, make sure all of these pass:
 

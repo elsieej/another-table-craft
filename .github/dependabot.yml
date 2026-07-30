@@ -1,7 +1,8 @@
 version: 2
 updates:
-  # Once the demo/ workspace exists (#22), add a second entry for it here —
-  # Dependabot errors on a directory that doesn't exist yet rather than skipping it.
+  # This repo is an npm-workspaces monorepo (packages/table-craft, demo) sharing a
+  # single root-level lockfile — one entry pointed at the workspace root covers the
+  # whole dependency tree.
   - package-ecosystem: 'npm'
     directory: '/'
     schedule:

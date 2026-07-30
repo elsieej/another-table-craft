@@ -5,11 +5,11 @@ import tseslint from 'typescript-eslint'
 import eslintConfigPrettier from 'eslint-config-prettier'
 
 export default [
-  { ignores: ['demo/dist/**'] },
+  { ignores: ['demo/dist/**', 'packages/table-craft/dist/**'] },
   ...tseslint.configs.recommended,
   eslintConfigPrettier,
   {
-    files: ['src/core/**/*.{ts,tsx}'],
+    files: ['packages/table-craft/src/core/**/*.{ts,tsx}'],
     rules: {
       'no-restricted-imports': [
         'error',
