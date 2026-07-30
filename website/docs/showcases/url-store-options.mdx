@@ -1,0 +1,59 @@
+---
+sidebar_position: 4
+sidebar_label: URL store custom options
+---
+
+import CustomParamNamesExample from '@site/src/components/showcases/CustomParamNamesExample'
+import HistoryModeExample from '@site/src/components/showcases/HistoryModeExample'
+import DebounceModeExample from '@site/src/components/showcases/DebounceModeExample'
+
+# URL store custom options
+
+`createUrlStateStore` takes an options object beyond its zero-config defaults: custom query-param names, whether
+each change adds a browser-history entry or replaces the current one, and how long it waits before writing.
+
+:::note
+Each demo below creates its **own** `createUrlStateStore`, and each one is namespaced with distinct
+`paramNames` for every field it writes. That's deliberate: a store that doesn't recognize a param name in the
+current URL preserves it untouched rather than discarding it, so all three demos below safely coexist on this
+one page. Two stores that left the _same_ field at its default name, and both wrote to it, would genuinely
+overwrite each other's value — which is why each section below customizes every field it touches.
+:::
+
+## Custom param names
+
+By default the URL store uses names like `page`, `sort`, `q`. Pass `paramNames` to use your own:
+
+```tsx
+createUrlStateStore({ paramNames: { page: 'p', pageSize: 'size', sort: 'order' } })
+```
+
+<CustomParamNamesExample />
+
+Sort a column, change page, or change rows-per-page and check the query string above — it reads
+`p=`/`order=`/`size=`, never the defaults.
+
+## `history`: push vs. replace
+
+`replace` (the default) overwrites the current history entry on every change, so paging through a table
+doesn't fill up your browser history with one entry per page. `push` adds a new entry each time, so the
+browser's Back button steps back through prior states.
+
+<HistoryModeExample />
+
+Try it: with **replace** selected, click Next a couple of times, then click **◀ Go back** once — you land right
+back where this page started, because every change overwrote the same entry. Switch to **push**, click Next a
+couple of times, then click **◀ Go back** repeatedly — you'll step back one page at a time before finally
+leaving this state entirely.
+
+## `debounceMs`
+
+Writes to the URL are debounced — `useTableCraft`'s own state (and this page's re-render) update immediately,
+but the actual `history.replaceState`/`pushState` call, and so the query string you see, lags behind by
+`debounceMs` (300ms by default).
+
+<DebounceModeExample />
+
+Set it to **0** and type — the query string above catches up almost immediately. Set it to **2000** and type —
+you'll see it lag noticeably behind your keystrokes before finally catching up. (300ms, the real default, sits
+between these two — these exaggerated values just make the effect easy to see.)
