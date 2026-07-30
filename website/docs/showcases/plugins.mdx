@@ -1,0 +1,55 @@
+---
+sidebar_position: 8
+sidebar_label: Plugin system
+---
+
+import PluginSystemExample from '@site/src/components/showcases/PluginSystemExample'
+
+# Plugin system
+
+`TablePlugin`s are the config cascade's fourth and final layer, applied after defaults, provider, and instance
+config have all merged. Each plugin carries its own partial config and a `priority` — lower numbers apply
+first, so a later (higher-priority-number) plugin can override an earlier one.
+
+<PluginSystemExample />
+
+This table registers two plugins:
+
+```tsx
+const sizingPlugin: TablePlugin = {
+  name: 'sizing',
+  priority: 10,
+  config: { pagination: { pageSizeOptions: [4, 8, 12], defaultPageSize: 4 } }
+}
+
+const overrideSizePlugin: TablePlugin = {
+  name: 'override-size',
+  priority: 20,
+  config: { pagination: { defaultPageSize: 8 } },
+  onResolve: (resolvedConfig) => console.log('resolved defaultPageSize:', resolvedConfig.pagination.defaultPageSize)
+}
+```
+
+`sizingPlugin` (priority 10) applies first, setting both `pageSizeOptions` and `defaultPageSize`.
+`overrideSizePlugin` (priority 20) applies second and only sets `defaultPageSize` — so it wins for that one
+field, while `pageSizeOptions` still comes from `sizingPlugin` since nothing later touches it. Check the
+"Resolved:" line above: `defaultPageSize` is `8` (the later plugin's value), not `4`.
+
+## `onResolve`
+
+Every plugin's `onResolve` callback fires once resolution completes, receiving the fully-merged config —
+useful for side effects like logging, analytics, or validation that need to see the final result.
+`override-size`'s `onResolve` both logs the resolved `defaultPageSize` to your browser console and writes it
+to a ref this component reads back into the second line of text above — so you can see its effect land on the
+page itself, not just in devtools.
+
+```tsx
+useTableCraft({
+  data,
+  columns,
+  config: { plugins: [sizingPlugin, overrideSizePlugin] }
+})
+```
+
+Plugins are just another field on `TableConfig` — set them via `TableProvider`, instance `config`, or (as
+here) both together; wherever they land, they're always applied last, after every other layer has merged.
