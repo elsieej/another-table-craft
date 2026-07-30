@@ -2,11 +2,13 @@ import { useState } from 'react'
 import BasicTable from './showcases/BasicTable'
 import QueryParamShowcase from './showcases/QueryParamShowcase'
 import ConfigCascadeShowcase from './showcases/ConfigCascadeShowcase'
+import CsvExportShowcase from './showcases/CsvExportShowcase'
 
 const TABS = [
   { id: 'basic', label: 'Basic table', Component: BasicTable },
   { id: 'query-param', label: 'Query-param state', Component: QueryParamShowcase },
-  { id: 'config-cascade', label: 'Config cascade', Component: ConfigCascadeShowcase }
+  { id: 'config-cascade', label: 'Config cascade', Component: ConfigCascadeShowcase },
+  { id: 'csv-export', label: 'CSV export', Component: CsvExportShowcase }
 ] as const
 
 function App() {
