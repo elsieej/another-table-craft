@@ -1,0 +1,36 @@
+---
+sidebar_position: 2
+sidebar_label: URL-synced state
+---
+
+import UrlSyncedTableExample from '@site/src/components/showcases/UrlSyncedTableExample'
+
+# URL-synced state
+
+This is `useTableCraft`'s actual default — call it with no `store` at all, and pagination, sorting, and the
+global filter sync straight to this page's own URL query string via the native History API.
+
+<UrlSyncedTableExample />
+
+Try it: sort a column, change page, or type into the search box, then watch the query-string line above update
+a moment after each change (writes are debounced 300ms by default). Then **reload this page** — the table
+comes back exactly where you left it, because that state now lives in the URL itself, not in any component
+state that a reload would discard.
+
+```tsx
+import { useTableCraft } from 'another-table-craft'
+
+// No `store` -- defaults to a URL-backed store in the browser.
+const { table, state, setGlobalFilter } = useTableCraft({ data, columns })
+```
+
+## What syncs, and what doesn't
+
+`createUrlStateStore` (the store behind this default) serializes `pagination`, `sorting`, `globalFilter`,
+`columnFilters`, `columnVisibility`, and `viewMode` — the full `TableStateSnapshot` — to query params. Row
+selection is deliberately excluded: it's ephemeral, session-only UI state that shouldn't round-trip through a
+URL or survive a reload.
+
+During this site's static build there's no `window` to read a URL from, so `useTableCraft` transparently falls
+back to an in-memory store for the server-rendered HTML; the real URL store takes over the moment this page
+hydrates in your browser.

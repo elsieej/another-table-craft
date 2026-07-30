@@ -1,7 +1,8 @@
 import { useMemo, type ReactNode } from 'react'
-import { flexRender, type ColumnDef } from '@tanstack/react-table'
+import { type ColumnDef } from '@tanstack/react-table'
 import { createMemoryStateStore, useTableCraft } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
+import { PaginationControls, SortableDataTable } from './SortableDataTable'
 
 const columns: ColumnDef<Person>[] = [
   { accessorKey: 'name', header: 'Name' },
@@ -16,74 +17,8 @@ export default function BasicTableExample(): ReactNode {
 
   return (
     <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <table style={{ width: '100%', borderCollapse: 'collapse' }}>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                const sortDirection = header.column.getIsSorted()
-                return (
-                  <th
-                    key={header.id}
-                    aria-sort={sortDirection === 'asc' ? 'ascending' : sortDirection === 'desc' ? 'descending' : 'none'}
-                    style={{
-                      textAlign: 'left',
-                      borderBottom: '2px solid var(--ifm-color-emphasis-400)',
-                      padding: '0.5rem'
-                    }}
-                  >
-                    <button
-                      onClick={header.column.getToggleSortingHandler()}
-                      style={{
-                        all: 'unset',
-                        cursor: 'pointer',
-                        fontWeight: 'bold'
-                      }}
-                    >
-                      {flexRender(header.column.columnDef.header, header.getContext())}
-                      {sortDirection === 'asc' ? ' ▲' : sortDirection === 'desc' ? ' ▼' : ''}
-                    </button>
-                  </th>
-                )
-              })}
-            </tr>
-          ))}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id}>
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  style={{ borderBottom: '1px solid var(--ifm-color-emphasis-200)', padding: '0.5rem' }}
-                >
-                  {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-      </table>
-
-      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginTop: '1rem' }}>
-        <button
-          className='button button--sm button--outline button--primary'
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          Previous
-        </button>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </span>
-        <button
-          className='button button--sm button--outline button--primary'
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          Next
-        </button>
-      </div>
+      <SortableDataTable table={table} />
+      <PaginationControls table={table} />
     </div>
   )
 }
