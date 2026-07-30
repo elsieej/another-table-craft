@@ -1,0 +1,52 @@
+---
+sidebar_position: 9
+sidebar_label: Server-side (manual) mode
+---
+
+import ServerModeExample from '@site/src/components/showcases/ServerModeExample'
+
+# Server-side (manual) mode
+
+By default, `useTableCraft` filters/sorts/paginates whatever `data` you give it entirely client-side. Set
+`manualPagination`/`manualSorting`/`manualFiltering` and it stops doing that work itself — it hands you the
+current page/sort/filter state and expects `data` to already be exactly the rows you want rendered, however
+you produced them.
+
+<ServerModeExample />
+
+Every page change, sort, and search on this table triggers a genuine (simulated) fetch: a `Promise` that
+resolves after ~600ms, given the current `pageIndex`/`pageSize`/`sorting`/`globalFilter` and returning back the
+filtered/sorted/paginated slice plus a total `rowCount`. Watch the table fade out and the message below it
+change while a "request" is in flight.
+
+```tsx
+const [rows, setRows] = useState<Person[]>([])
+const [rowCount, setRowCount] = useState(0)
+
+const { table, state } = useTableCraft({
+  data: rows, // whatever the last fetch returned -- not the full dataset
+  columns,
+  manualPagination: true,
+  manualSorting: true,
+  manualFiltering: true,
+  rowCount, // needed so useTableCraft can compute pageCount itself
+  getRowId: (person) => `person-${person.id}`
+})
+
+useEffect(() => {
+  fetchFromServer({ ...state.pagination, sorting: state.sorting, globalFilter: state.globalFilter }).then((result) => {
+    setRows(result.rows)
+    setRowCount(result.rowCount)
+  })
+}, [state.pagination.pageIndex, state.pagination.pageSize, state.sorting, state.globalFilter])
+```
+
+## Why `getRowId` matters here
+
+In the default client-side mode, `data` is the same stable array across renders, so TanStack's fallback
+row-identity (array index) mostly works fine. In manual mode, `data` gets **replaced wholesale** on every
+fetch — page 2's rows have nothing to do with page 1's. Without an explicit `getRowId`, row index 0 would be
+treated as "the same row" across two completely different fetches, which breaks anything that tracks a row by
+identity across a re-fetch (row selection being the obvious one). Passing `getRowId: (person) => person.id`
+(prefixed here for visibility) ties each row's identity to the actual entity, not its position in whatever
+page happens to be loaded right now.
