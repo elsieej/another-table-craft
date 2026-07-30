@@ -30,7 +30,7 @@
     "build": "tsup",
     "dev": "tsup --watch",
     "typecheck": "tsc --noEmit",
-    "lint": "eslint src",
+    "lint": "eslint src demo/src",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "vitest run",
