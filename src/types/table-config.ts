@@ -1,5 +1,5 @@
 import type { FilterSerializer } from './table'
-import type { TableStateStore } from '../core/table-state-store'
+import type { TableStateStore } from './table-state-store'
 
 /** Deep-partial helper: makes every property (and nested property) optional. */
 export type DeepPartial<T> = {

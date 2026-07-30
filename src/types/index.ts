@@ -36,3 +36,7 @@ export type { FilterOptions } from './filter-options'
 
 export type { TableStateSnapshot, TableStatePatch } from './table-state'
 export { DEFAULT_TABLE_STATE, mergeTableState, resetPageIndex } from './table-state'
+
+export type { TableStateStore, TableStateStoreSetOptions } from './table-state-store'
+export type { UrlStateStoreParamNames, UrlStateStoreOptions } from './url-store'
+export type { UseTableCraftOptions, UseTableCraftResult } from './use-table-craft'

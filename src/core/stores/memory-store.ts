@@ -1,4 +1,4 @@
-import type { TableStateStore } from '../table-state-store'
+import type { TableStateStore } from '../../types/table-state-store'
 import type { TableStateSnapshot } from '../../types/table-state'
 import { DEFAULT_TABLE_STATE, mergeTableState, resetPageIndex } from '../../types/table-state'
 

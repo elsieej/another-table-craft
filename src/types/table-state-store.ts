@@ -1,4 +1,4 @@
-import type { TableStateSnapshot, TableStatePatch } from '../types/table-state'
+import type { TableStateSnapshot, TableStatePatch } from './table-state'
 
 export interface TableStateStoreSetOptions {
   /** Forces `pagination.pageIndex` back to 0 — pass whenever filters/sorting/search change. */
@@ -21,5 +21,3 @@ export interface TableStateStore {
   setState(partial: TableStatePatch, options?: TableStateStoreSetOptions): void
   reset?(keys?: (keyof TableStateSnapshot)[]): void
 }
-
-export type { TableStateSnapshot, TableStatePatch }

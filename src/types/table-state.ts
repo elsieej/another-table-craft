@@ -1,6 +1,6 @@
 /**
  * The full persistable state of a table instance. This is the shape every
- * `TableStateStore` (see `src/core/table-state-store.ts`) reads and writes.
+ * `TableStateStore` (see `src/types/table-state-store.ts`) reads and writes.
  *
  * Row selection is deliberately excluded: it's ephemeral, session-only UI state,
  * not something that should round-trip through a URL or any other persisted store.

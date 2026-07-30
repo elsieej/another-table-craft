@@ -1,9 +1,6 @@
 // Headless core
 export { useTableCraft } from './core/use-table-craft'
-export type { UseTableCraftOptions, UseTableCraftResult } from './core/use-table-craft'
-export type { TableStateStore, TableStateStoreSetOptions } from './core/table-state-store'
 export { createUrlStateStore } from './core/stores/url-store'
-export type { UrlStateStoreOptions, UrlStateStoreParamNames } from './core/stores/url-store'
 export { createMemoryStateStore } from './core/stores/memory-store'
 export { useDebounce } from './core/use-debounce'
 export {
@@ -62,6 +59,12 @@ export type {
   CursorPaginationData,
   FilterOptions,
   TableStateSnapshot,
-  TableStatePatch
+  TableStatePatch,
+  TableStateStore,
+  TableStateStoreSetOptions,
+  UrlStateStoreParamNames,
+  UrlStateStoreOptions,
+  UseTableCraftOptions,
+  UseTableCraftResult
 } from './types'
 export { DEFAULT_TABLE_STATE, mergeTableState, resetPageIndex } from './types/table-state'
