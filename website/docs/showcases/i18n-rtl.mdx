@@ -1,0 +1,59 @@
+---
+sidebar_position: 10
+sidebar_label: i18n & RTL
+---
+
+import I18nExample from '@site/src/components/showcases/I18nExample'
+
+# Internationalization & RTL
+
+`another-table-craft` is headless, so it doesn't render any UI strings itself — `useTableTranslations()` and
+`config.i18n` exist so **your own** UI (search boxes, buttons, labels) can be translated and direction-aware
+consistently with however the rest of your table config is set up.
+
+<I18nExample />
+
+## Custom `translationFn`
+
+`config.i18n.translationFn` is a plain `(key: string) => string` function. `useTableTranslations()` returns it
+directly if one is set, or a built-in English dictionary otherwise:
+
+```tsx
+const translations: Record<string, string> = { search: 'Buscar', previous: 'Anterior', next: 'Siguiente' }
+
+function translate(key: string): string {
+  return translations[key] ?? key
+}
+
+// Set at the provider layer, not as instance config -- see the note below on why that matters.
+;<TableProvider config={{ i18n: { locale: 'es', translationFn: translate } }}>
+  <MyTable />
+</TableProvider>
+```
+
+Inside `MyTable`, `const t = useTableTranslations()` returns the Spanish strings above for `t('search')`,
+`t('previous')`, `t('next')` — which is exactly what the search placeholder and pagination buttons in the
+first table above use. Keys the dictionary doesn't cover fall through to the key itself, not a crash.
+
+:::note
+`useTableTranslations()` (like `useTableConfig()`) only sees config set at the **defaults or provider** layer,
+not instance-level `config` passed directly to a specific `useTableCraft` call — a known gap tracked as a
+project issue. Setting `translationFn`/`direction` via `TableProvider`, as this page does, sidesteps it
+entirely.
+:::
+
+## `direction: 'rtl'`
+
+The second table sets `config.i18n.direction: 'rtl'` and reads it back via `useTableConfig()` to set a real
+`dir="rtl"` attribute on the `<table>` element — the library doesn't do this for you, since it has no markup of
+its own to apply it to. With no explicit `text-align` set (unlike this site's other table showcases), the
+browser's own direction-aware default alignment does the actual mirroring: headers and cells align right, and
+reading order flows right-to-left.
+
+```tsx
+const config = useTableConfig()
+<table dir={config.i18n.direction === 'auto' ? undefined : config.i18n.direction}>...</table>
+```
+
+`direction` also accepts `'auto'` (the default) to leave direction unset, or `'ltr'` to force left-to-right
+regardless of locale.

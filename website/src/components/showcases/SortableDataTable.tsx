@@ -1,14 +1,26 @@
 import { flexRender, type Table } from '@tanstack/react-table'
 
-/**
- * Shared table markup every showcase embeds: sortable headers (button + aria-sort) and rows.
- * `sortable` defaults to true; pass false to render plain header text with no sort affordance
- * at all -- e.g. when gating on `config.features.sorting`, which the library itself doesn't
- * enforce (see the config-cascade showcase and the known-limitations page).
- */
-export function SortableDataTable<TData>({ table, sortable = true }: { table: Table<TData>; sortable?: boolean }) {
+interface SortableDataTableProps<TData> {
+  table: Table<TData>
+  /** false renders plain header text with no sort affordance -- e.g. when gating on
+   * `config.features.sorting`, which the library itself doesn't enforce. */
+  sortable?: boolean
+  /** Native `dir` for the `<table>` element -- the RTL showcase sets this. */
+  dir?: 'ltr' | 'rtl'
+  /** false omits the hardcoded `textAlign: 'left'` so a `dir="rtl"` ancestor/table can show
+   * its own direction-aware default alignment instead -- the RTL showcase's whole point. */
+  textAlign?: boolean
+}
+
+/** Shared table markup every showcase embeds: sortable headers (button + aria-sort) and rows. */
+export function SortableDataTable<TData>({
+  table,
+  sortable = true,
+  dir,
+  textAlign = true
+}: SortableDataTableProps<TData>) {
   return (
-    <table style={{ width: '100%', borderCollapse: 'collapse' }}>
+    <table dir={dir} style={{ width: '100%', borderCollapse: 'collapse' }}>
       <thead>
         {table.getHeaderGroups().map((headerGroup) => (
           <tr key={headerGroup.id}>
@@ -28,7 +40,7 @@ export function SortableDataTable<TData>({ table, sortable = true }: { table: Ta
                       : undefined
                   }
                   style={{
-                    textAlign: 'left',
+                    ...(textAlign ? { textAlign: 'left' as const } : {}),
                     borderBottom: '2px solid var(--ifm-color-emphasis-400)',
                     padding: '0.5rem'
                   }}
