@@ -2,6 +2,8 @@
 
 A production-ready, SPA-first React data table system built on [TanStack Table](https://tanstack.com/table), with query-param state as a first-class default and [Base UI](https://base-ui.com/) presentation primitives.
 
+**[Live demo →](https://elsieej.github.io/another-table-craft/)** — a basic table, query-param state syncing to the URL, the config cascade, and CSV export, all against the real published package.
+
 ## Features
 
 - **Headless core** — `useTableCraft` owns the single `useReactTable()` call and exposes state + handlers, fully decoupled from any specific state-storage mechanism or presentation layer.
