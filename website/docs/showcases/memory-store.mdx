@@ -1,0 +1,34 @@
+---
+sidebar_position: 1
+sidebar_label: Memory-store table
+---
+
+import BasicTableExample from '@site/src/components/showcases/BasicTableExample'
+
+# Memory-store table
+
+The simplest way to use `useTableCraft`: pass a `createMemoryStateStore()` and get a fully working table —
+sorting, pagination — with state that lives only in memory for the lifetime of the component.
+
+<BasicTableExample />
+
+Click a column header to sort by it; click again to reverse; a third click clears the sort. Nothing here
+touches this page's own URL — reload the page and the table resets to its initial state.
+
+## When to reach for a memory store
+
+`useTableCraft`'s default (no `store` passed) is a URL-backed store, so table state survives a refresh or a
+shared link. Pass `createMemoryStateStore()` instead when you explicitly don't want that — for example:
+
+- Multiple table instances on one page that would otherwise fight over the same URL query params
+- A table embedded inside a modal, drawer, or wizard step, where surviving a reload isn't meaningful
+- Tests and demos (like this one), where a clean, isolated starting state matters more than persistence
+
+```tsx
+import { useTableCraft, createMemoryStateStore } from 'another-table-craft'
+
+const store = createMemoryStateStore()
+const { table } = useTableCraft({ data, columns, store })
+```
+
+`createMemoryStateStore` also accepts an initial snapshot, e.g. `createMemoryStateStore({ pagination: { pageIndex: 0, pageSize: 5 } })`, if you want to seed a non-default starting page size.

@@ -20,18 +20,32 @@ export default function BasicTableExample(): ReactNode {
         <thead>
           {table.getHeaderGroups().map((headerGroup) => (
             <tr key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  style={{
-                    textAlign: 'left',
-                    borderBottom: '2px solid var(--ifm-color-emphasis-400)',
-                    padding: '0.5rem'
-                  }}
-                >
-                  {flexRender(header.column.columnDef.header, header.getContext())}
-                </th>
-              ))}
+              {headerGroup.headers.map((header) => {
+                const sortDirection = header.column.getIsSorted()
+                return (
+                  <th
+                    key={header.id}
+                    aria-sort={sortDirection === 'asc' ? 'ascending' : sortDirection === 'desc' ? 'descending' : 'none'}
+                    style={{
+                      textAlign: 'left',
+                      borderBottom: '2px solid var(--ifm-color-emphasis-400)',
+                      padding: '0.5rem'
+                    }}
+                  >
+                    <button
+                      onClick={header.column.getToggleSortingHandler()}
+                      style={{
+                        all: 'unset',
+                        cursor: 'pointer',
+                        fontWeight: 'bold'
+                      }}
+                    >
+                      {flexRender(header.column.columnDef.header, header.getContext())}
+                      {sortDirection === 'asc' ? ' ▲' : sortDirection === 'desc' ? ' ▼' : ''}
+                    </button>
+                  </th>
+                )
+              })}
             </tr>
           ))}
         </thead>
