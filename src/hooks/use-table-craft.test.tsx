@@ -2,7 +2,7 @@ import { describe, expect, it, vi } from 'vitest'
 import { act, renderHook } from '@testing-library/react'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useTableCraft } from './use-table-craft'
-import { createMemoryStateStore } from './stores/memory-store'
+import { createMemoryStateStore } from '../core/stores/memory-store'
 import type { TableStateSnapshot } from '../types/table-state'
 
 interface Row {

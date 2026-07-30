@@ -2,7 +2,7 @@
 
 import { useMemo } from 'react'
 import type { TableConfig } from '../types/table-config'
-import { useGlobalTableConfig, useResolvedTableConfigContext } from './context'
+import { useGlobalTableConfig, useResolvedTableConfigContext } from '../config/context'
 
 /**
  * Consumer hook for reading the resolved table config.

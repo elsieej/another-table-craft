@@ -1,8 +1,8 @@
 // Headless core
-export { useTableCraft } from './core/use-table-craft'
+export { useTableCraft } from './hooks/use-table-craft'
 export { createUrlStateStore } from './core/stores/url-store'
 export { createMemoryStateStore } from './core/stores/memory-store'
-export { useDebounce } from './core/use-debounce'
+export { useDebounce } from './hooks/use-debounce'
 export {
   createDelimited,
   dotSeparated,

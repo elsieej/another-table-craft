@@ -2,9 +2,9 @@
 
 import { useMemo } from 'react'
 import type { TableConfig, TableConfigInput } from '../types/table-config'
-import { useGlobalTableConfig } from './context'
-import { deepMergeConfig } from './merge'
-import { runDevValidation } from './dev-warnings'
+import { useGlobalTableConfig } from '../config/context'
+import { deepMergeConfig } from '../config/merge'
+import { runDevValidation } from '../config/dev-warnings'
 
 /**
  * Resolves config across all layers: Core Defaults -> Provider -> Instance -> Plugins.

@@ -15,12 +15,12 @@ import {
   useReactTable
 } from '@tanstack/react-table'
 
-import { createMemoryStateStore } from './stores/memory-store'
-import { createUrlStateStore } from './stores/url-store'
+import { createMemoryStateStore } from '../core/stores/memory-store'
+import { createUrlStateStore } from '../core/stores/url-store'
 import type { TableStateStore } from '../types/table-state-store'
 import type { TableStatePatch, TableStateSnapshot } from '../types/table-state'
 import { DEFAULT_TABLE_STATE, mergeTableState } from '../types/table-state'
-import { useResolvedTableConfig } from '../config/use-resolved-config'
+import { useResolvedTableConfig } from './use-resolved-config'
 import type { UseTableCraftOptions, UseTableCraftResult } from '../types/use-table-craft'
 
 function resolveUpdater<T>(updater: Updater<T>, current: T): T {
