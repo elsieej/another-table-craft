@@ -6,29 +6,45 @@ export type DeepPartial<T> = {
   [P in keyof T]?: T[P] extends (infer U)[] ? U[] : T[P] extends object ? DeepPartial<T[P]> : T[P]
 }
 
-/** Feature flags controlling which UI elements are rendered. */
+/**
+ * Consumer-facing UI hints, not enforced switches. `another-table-craft` is headless and
+ * renders no UI of its own, so none of these flags gate any library behavior directly --
+ * read them via `useTableConfig()`/the `config` a `useTableCraft` call returns, and gate
+ * your own components accordingly. See the config cascade showcase (in this repo's docs
+ * site) for the pattern, using `sorting` as the worked example.
+ */
 export interface TableFeatureFlags {
   /** Show search inputs. */
   search: boolean
-  /** Show filter dropdowns. */
+  /** Show filter dropdowns. Also checked, alongside `advancedFilter`, to print a dev-mode
+   * console warning -- the only place any flag in this interface is read by the library
+   * itself. */
   filter: boolean
-  /** Show pagination controls. */
+  /** Show pagination controls. `useTableCraft` always wires up TanStack pagination
+   * regardless of this flag (independent of `manualPagination`, which controls whether
+   * pagination is computed client- or server-side). */
   pagination: boolean
   /** Show column visibility toggle. */
   columnVisibility: boolean
-  /** Show CSV export button. */
+  /** Show CSV export button. `exportSelectedRowsCsv` works regardless of this flag. */
   csvExport: boolean
-  /** Enable row selection checkboxes. */
+  /** Enable row selection checkboxes. `useTableCraft` doesn't configure TanStack's row
+   * selection at all -- enabling it is entirely on the consumer. */
   rowSelection: boolean
   /** Show table/card view toggle. */
   viewToggle: boolean
-  /** Initial view mode when viewToggle is enabled. Defaults to 'table'. */
+  /** Initial view mode when `viewToggle` is enabled. Nothing seeds this default into
+   * `TableStateSnapshot.viewMode` (which starts `null`) -- a consumer reading this flag has
+   * to apply it themselves. */
   defaultViewMode: 'table' | 'cards'
   /** Show floating action bar for selected rows. */
   floatingBar: boolean
-  /** Enable advanced filter builder UI. */
+  /** Enable advanced filter builder UI. See `filter` above for the one place this flag is
+   * actually read (a dev-mode warning, not enforcement). */
   advancedFilter: boolean
-  /** Enable column sorting. */
+  /** Enable column sorting. `useTableCraft` always wires up full TanStack sorting
+   * regardless of this flag (independent of `manualSorting`) -- a consumer's own header
+   * rendering has to read it and choose whether to show a sort control. */
   sorting: boolean
 }
 

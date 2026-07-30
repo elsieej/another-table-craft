@@ -49,5 +49,7 @@ const { table, config } = useTableCraft({ data, columns, /* ... */ })
 <SortableDataTable table={table} sortable={config.features.sorting} />
 ```
 
-Every flag on `TableConfig.features` works this way today — none of them are enforced by the library itself,
-`sorting` is just the one this page happens to demonstrate. See the known limitations page for the full list.
+Every flag on `TableConfig.features` works this way by design — none of them are enforced by the library
+itself, `sorting` is just the one this page happens to demonstrate. Each flag's own doc comment (visible in
+your editor's autocomplete, or directly in the library's `TableFeatureFlags` type) spells out exactly what it
+does and doesn't do.

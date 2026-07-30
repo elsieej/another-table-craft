@@ -10,21 +10,6 @@ counterpart: what's declared in the API but doesn't do what its name implies, tr
 rather than swept under the rug. It exists to serve two purposes — confirming what's actually safe to rely on
 today, and seeding ideas for what to build next.
 
-## Most of `TableConfig.features` is a consumer hint, not an enforced feature
-
-`TableConfig.features` declares ten boolean flags: `search`, `filter`, `pagination`, `columnVisibility`,
-`csvExport`, `rowSelection`, `viewToggle`, `floatingBar`, `advancedFilter`, `sorting`. Only two of them are
-read anywhere in the library's own code, and only for a dev-mode console warning (`advancedFilter` enabled
-while `filter` is disabled) — not to actually disable anything.
-
-The [config cascade showcase](./config-cascade) demonstrates the practical consequence directly: setting
-`features.sorting: false` doesn't stop `useTableCraft` from wiring up full sorting — the demo's own
-`SortableDataTable` component has to read `config.features.sorting` itself and choose whether to render a sort
-button at all. Every other flag in this list works the same way, or would if a consumer wired it up the same
-way: they're hints for your own UI to read via `useTableConfig()`, not switches the library flips for you.
-
-Tracked in [#42](https://github.com/elsieej/another-table-craft/issues/42).
-
 ## `ResolvedTableConfigContext` is never reachable in real usage
 
 `useTableConfig()` and `useTableTranslations()` are documented as seeing the fully-resolved config (all four
