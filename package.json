@@ -4,6 +4,9 @@
   "engines": {
     "node": ">=20"
   },
+  "workspaces": [
+    "demo"
+  ],
   "description": "A production-ready, SPA-first React data table system built on TanStack Table, with query-param state as a first-class default and Base UI presentation primitives.",
   "main": "./dist/index.cjs",
   "module": "./dist/index.js",
