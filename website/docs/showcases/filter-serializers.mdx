@@ -1,0 +1,43 @@
+---
+sidebar_position: 6
+sidebar_label: Filter serializers
+---
+
+import FilterSerializersExample from '@site/src/components/showcases/FilterSerializersExample'
+
+# Filter serializers
+
+Multi-value column filters (an array of allowed values, like "Team is Compilers or Runtime") need to serialize
+that array into a single query string. `another-table-craft` ships four built-in strategies (three of them
+built on the same `createDelimited` factory you can also call directly), and lets you pick a default for the
+whole store, or override it per column.
+
+<FilterSerializersExample />
+
+Check a few **Team** boxes and watch the query string — it uses whichever serializer is selected above. Switch
+the serializer and check different boxes to compare formats. Then check a few **Role** boxes: that filter
+always uses `multiKey`, no matter what's selected for Team, because it has an explicit per-column override.
+
+## The four strategies
+
+| Serializer       | URL shape for `['a', 'b']` | Notes                                                    |
+| ---------------- | -------------------------- | -------------------------------------------------------- |
+| `dotSeparated`   | `?team=a.b`                | The library's default.                                   |
+| `commaSeparated` | `?team=a%2Cb` (`a,b`)      | Familiar, but commas need URL-encoding.                  |
+| `pipeSeparated`  | `?team=a%7Cb` (`a\|b`)     | Rarely collides with real data values.                   |
+| `multiKey`       | `?team=a&team=b`           | Native repeated-key format; no separator, no collisions. |
+
+`dotSeparated`/`commaSeparated`/`pipeSeparated` are all built with the same `createDelimited(separator)` helper
+— pick whichever character your data will never contain, or call it directly with your own (the demo above's
+"createDelimited(';')" option does exactly that). `multiKey` sidesteps the whole question by never joining
+values into one string at all, at the cost of a slightly less compact URL.
+
+```tsx
+import { createDelimited, createUrlStateStore, multiKey } from 'another-table-craft'
+
+createUrlStateStore({
+  defaultSerializer: /* one of dotSeparated, commaSeparated, pipeSeparated, multiKey, or createDelimited(';') */,
+  // Per-column override -- takes priority over defaultSerializer for this one column:
+  filterSerializers: { role: multiKey }
+})
+```
