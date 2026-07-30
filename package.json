@@ -85,6 +85,6 @@
   },
   "repository": {
     "type": "git",
-    "url": ""
+    "url": "git+https://github.com/elsieej/another-table-craft.git"
   }
 }
