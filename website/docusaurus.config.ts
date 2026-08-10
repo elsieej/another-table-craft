@@ -32,6 +32,15 @@ const config: Config = {
 
   onBrokenLinks: 'throw',
 
+  // Geist / Geist Mono for the table-craft components (see `--font-sans`/`--font-mono` in
+  // packages/table-craft/src/styles/theme.css) -- the package declares the font stack but ships no font
+  // files itself, so the host page is expected to load them, same as any other web font.
+  stylesheets: [
+    {
+      href: 'https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&family=Geist+Mono:wght@400;500;600&display=swap'
+    }
+  ],
+
   // Even if you don't use internationalization, you can use this field to set
   // useful metadata like html lang. For example, if your site is Chinese, you
   // may want to replace "en" with "zh-Hans".
