@@ -1,25 +1,24 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { createMemoryStateStore, exportSelectedRowsCsv, useTableCraft } from 'another-table-craft'
+import { Button, Checkbox, createMemoryStateStore, exportSelectedRowsCsv, useTableCraft } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 
 const columns: ColumnDef<Person>[] = [
   {
     id: 'select',
     header: ({ table }) => (
-      <input
-        type='checkbox'
+      <Checkbox
         checked={table.getIsAllPageRowsSelected()}
-        onChange={table.getToggleAllPageRowsSelectedHandler()}
+        onCheckedChange={(checked) => table.toggleAllPageRowsSelected(checked === true)}
         aria-label='Select all rows on this page'
       />
     ),
     cell: ({ row }) => (
-      <input
-        type='checkbox'
+      <Checkbox
         checked={row.getIsSelected()}
-        onChange={row.getToggleSelectedHandler()}
+        onCheckedChange={(checked) => row.toggleSelected(checked === true)}
         aria-label={`Select row ${row.index + 1}`}
       />
     )
@@ -35,20 +34,20 @@ export default function CsvExportDefaultsExample(): ReactNode {
   const selectedCount = table.getSelectedRowModel().rows.length
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <SortableDataTable table={table} sortable={false} />
-      <PaginationControls table={table} />
-
-      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginTop: '1rem' }}>
-        <span>{selectedCount} selected</span>
-        <button
-          className='button button--sm button--primary'
-          onClick={() => exportSelectedRowsCsv(table)}
-          disabled={selectedCount === 0}
-        >
-          Export CSV
-        </button>
-      </div>
-    </div>
+    <TableCard
+      table={table}
+      sortable={false}
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <div className='flex items-center gap-3'>
+            <span className='text-[13px] text-muted-foreground'>{selectedCount} selected</span>
+            <Button size='sm' onClick={() => exportSelectedRowsCsv(table)} disabled={selectedCount === 0}>
+              Export CSV
+            </Button>
+          </div>
+        </>
+      }
+    />
   )
 }

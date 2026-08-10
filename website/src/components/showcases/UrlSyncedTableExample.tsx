@@ -1,8 +1,9 @@
 import { type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { useTableCraft } from 'another-table-craft'
+import { SearchInput, useTableCraft } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 import { useLiveLocationSearch } from '../../hooks/useLiveLocationSearch'
 
 const columns: ColumnDef<Person>[] = [
@@ -18,22 +19,26 @@ export default function UrlSyncedTableExample(): ReactNode {
   const currentSearch = useLiveLocationSearch()
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <input
-        type='text'
-        placeholder='Search all columns…'
-        value={state.globalFilter}
-        onChange={(event) => setGlobalFilter(event.target.value)}
-        style={{ marginBottom: '1rem', padding: '0.4rem', width: '100%', boxSizing: 'border-box' }}
-        aria-label='Global filter'
-      />
-
-      <SortableDataTable table={table} />
-      <PaginationControls table={table} />
-
-      <p style={{ marginTop: '1rem', marginBottom: 0 }}>
-        This page's URL right now: <code>{currentSearch || '(no query params -- try sorting or paging)'}</code>
-      </p>
-    </div>
+    <TableCard
+      table={table}
+      toolbar={
+        <SearchInput
+          placeholder='Search all columns…'
+          aria-label='Global filter'
+          value={state.globalFilter}
+          onChange={(event) => setGlobalFilter(event.target.value)}
+          onClear={() => setGlobalFilter('')}
+          className='w-full'
+        />
+      }
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <p className='m-0 text-[13px] text-muted-foreground'>
+            This page's URL right now: <code>{currentSearch || '(no query params -- try sorting or paging)'}</code>
+          </p>
+        </>
+      }
+    />
   )
 }

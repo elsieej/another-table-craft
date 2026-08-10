@@ -1,7 +1,9 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import {
+  Button,
   createMemoryStateStore,
+  SearchInput,
   TableProvider,
   useTableConfig,
   useTableCraft,
@@ -9,7 +11,7 @@ import {
   type TableConfigInput
 } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
 
 const columns: ColumnDef<Person>[] = [
   { accessorKey: 'name', header: 'Name' },
@@ -39,36 +41,37 @@ function TranslatedTable(): ReactNode {
   const { table, state, setGlobalFilter } = useTableCraft({ data: people, columns, store })
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <input
-        type='text'
-        placeholder={t('search')}
-        aria-label={t('search')}
-        value={state.globalFilter}
-        onChange={(event) => setGlobalFilter(event.target.value)}
-        style={{ marginBottom: '1rem', padding: '0.4rem', width: '100%', boxSizing: 'border-box' }}
-      />
-      <SortableDataTable table={table} />
-      <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', marginTop: '1rem' }}>
-        <button
-          className='button button--sm button--outline button--primary'
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
-        >
-          {t('previous')}
-        </button>
-        <span>
-          Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
-        </span>
-        <button
-          className='button button--sm button--outline button--primary'
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
-        >
-          {t('next')}
-        </button>
-      </div>
-    </div>
+    <TableCard
+      table={table}
+      toolbar={
+        <SearchInput
+          placeholder={t('search')}
+          aria-label={t('search')}
+          value={state.globalFilter}
+          onChange={(event) => setGlobalFilter(event.target.value)}
+          onClear={() => setGlobalFilter('')}
+          className='w-full'
+        />
+      }
+      footer={
+        <div className='flex items-center gap-3'>
+          <Button
+            size='sm'
+            variant='outline'
+            onClick={() => table.previousPage()}
+            disabled={!table.getCanPreviousPage()}
+          >
+            {t('previous')}
+          </Button>
+          <span className='text-[13px] text-muted-foreground'>
+            Page {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
+          </span>
+          <Button size='sm' variant='outline' onClick={() => table.nextPage()} disabled={!table.getCanNextPage()}>
+            {t('next')}
+          </Button>
+        </div>
+      }
+    />
   )
 }
 
@@ -78,13 +81,9 @@ function RtlTable(): ReactNode {
   const store = useMemo(() => createMemoryStateStore(), [])
   const { table } = useTableCraft({ data: people, columns, store })
 
-  return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      {/* Column headers use the CSS logical `text-start` property (not `text-left`), so this
-          `dir` is what actually flips the alignment -- that's the whole point of this demo. */}
-      <SortableDataTable table={table} sortable={false} dir={dir} />
-    </div>
-  )
+  // Column headers use the CSS logical `text-start` property (not `text-left`), so this
+  // `dir` is what actually flips the alignment -- that's the whole point of this demo.
+  return <TableCard table={table} sortable={false} dir={dir} />
 }
 
 export default function I18nExample(): ReactNode {

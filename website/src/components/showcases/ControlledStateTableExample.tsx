@@ -2,7 +2,8 @@ import { useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { DEFAULT_TABLE_STATE, useTableCraft, type TableStateSnapshot } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 
 const columns: ColumnDef<Person>[] = [
   { accessorKey: 'name', header: 'Name' },
@@ -17,14 +18,19 @@ export default function ControlledStateTableExample(): ReactNode {
   const { table } = useTableCraft({ data: people, columns, state, onStateChange: setState })
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <SortableDataTable table={table} />
-      <PaginationControls table={table} />
-
-      <p style={{ marginTop: '1rem', marginBottom: '0.25rem' }}>
-        The state below is this component's own <code>useState</code>, echoed back by <code>onStateChange</code>:
-      </p>
-      <pre style={{ margin: 0, maxHeight: 200, overflow: 'auto' }}>{JSON.stringify(state, null, 2)}</pre>
-    </div>
+    <TableCard
+      table={table}
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <div>
+            <p className='mt-0 mb-1.5 text-[13px] text-muted-foreground'>
+              The state below is this component's own <code>useState</code>, echoed back by <code>onStateChange</code>:
+            </p>
+            <pre className='m-0 max-h-[200px] overflow-auto text-[13px]'>{JSON.stringify(state, null, 2)}</pre>
+          </div>
+        </>
+      }
+    />
   )
 }

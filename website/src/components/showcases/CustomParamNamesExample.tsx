@@ -1,8 +1,18 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { createUrlStateStore, useTableCraft } from 'another-table-craft'
+import {
+  createUrlStateStore,
+  Label,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  useTableCraft
+} from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 import { useLiveLocationSearch } from '../../hooks/useLiveLocationSearch'
 
 const columns: ColumnDef<Person>[] = [
@@ -17,24 +27,36 @@ export default function CustomParamNamesExample(): ReactNode {
   const currentSearch = useLiveLocationSearch()
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
-        <span>rows per page:</span>
-        <select
-          value={table.getState().pagination.pageSize}
-          onChange={(event) => table.setPageSize(Number(event.target.value))}
-        >
-          <option value={3}>3</option>
-          <option value={5}>5</option>
-          <option value={10}>10 (default)</option>
-        </select>
-      </label>
-
-      <SortableDataTable table={table} />
-      <PaginationControls table={table} />
-      <p style={{ marginTop: '1rem', marginBottom: 0 }}>
-        Query string: <code>{currentSearch || '(none yet -- sort or page to see p / order / size appear)'}</code>
-      </p>
-    </div>
+    <TableCard
+      table={table}
+      toolbar={
+        <div className='flex items-center gap-2'>
+          <Label htmlFor='custom-param-page-size' className='text-[13px]'>
+            rows per page:
+          </Label>
+          <Select
+            value={`${table.getState().pagination.pageSize}`}
+            onValueChange={(value) => table.setPageSize(Number(value))}
+          >
+            <SelectTrigger id='custom-param-page-size' className='w-fit'>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value='3'>3</SelectItem>
+              <SelectItem value='5'>5</SelectItem>
+              <SelectItem value='10'>10 (default)</SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      }
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <p className='m-0 text-[13px] text-muted-foreground'>
+            Query string: <code>{currentSearch || '(none yet -- sort or page to see p / order / size appear)'}</code>
+          </p>
+        </>
+      }
+    />
   )
 }

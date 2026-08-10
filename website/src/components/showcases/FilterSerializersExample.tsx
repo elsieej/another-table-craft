@@ -1,17 +1,25 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import {
+  Checkbox,
   commaSeparated,
   createDelimited,
   createUrlStateStore,
   dotSeparated,
+  Label,
   multiKey,
   pipeSeparated,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
   useTableCraft,
   type FilterSerializer
 } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 import { useLiveLocationSearch } from '../../hooks/useLiveLocationSearch'
 
 const STRATEGIES: Record<string, { label: string; serializer: FilterSerializer }> = {
@@ -35,6 +43,37 @@ const columns: ColumnDef<Person>[] = [
 
 function toggle(values: string[], value: string): string[] {
   return values.includes(value) ? values.filter((existing) => existing !== value) : [...values, value]
+}
+
+function CheckboxGroup({
+  legend,
+  options,
+  selected,
+  onToggle,
+  prefix
+}: {
+  legend: string
+  options: string[]
+  selected: string[]
+  onToggle: (value: string) => void
+  prefix: string
+}) {
+  return (
+    <fieldset className='m-0 flex min-w-40 flex-col gap-1.5 border-0 p-0'>
+      <legend className='mb-1 text-[13px] font-medium text-foreground'>{legend}</legend>
+      {options.map((option) => {
+        const id = `${prefix}-${option}`
+        return (
+          <div key={option} className='flex items-center gap-2'>
+            <Checkbox id={id} checked={selected.includes(option)} onCheckedChange={() => onToggle(option)} />
+            <Label htmlFor={id} className='text-[13px] font-normal'>
+              {option}
+            </Label>
+          </div>
+        )
+      })}
+    </fieldset>
+  )
 }
 
 export default function FilterSerializersExample(): ReactNode {
@@ -66,54 +105,54 @@ export default function FilterSerializersExample(): ReactNode {
   }
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <label style={{ display: 'flex', gap: '0.5rem', alignItems: 'center', marginBottom: '1rem' }}>
-        <span>default serializer (applies to the Team filter):</span>
-        <select value={strategyKey} onChange={(event) => setStrategyKey(event.target.value as keyof typeof STRATEGIES)}>
-          {Object.entries(STRATEGIES).map(([key, { label }]) => (
-            <option key={key} value={key}>
-              {label}
-            </option>
-          ))}
-        </select>
-      </label>
+    <TableCard
+      table={table}
+      toolbar={
+        <>
+          <div className='flex items-center gap-2'>
+            <Label htmlFor='serializer-strategy' className='text-[13px] whitespace-nowrap'>
+              default serializer (applies to the Team filter):
+            </Label>
+            <Select value={strategyKey} onValueChange={(value) => setStrategyKey(value as keyof typeof STRATEGIES)}>
+              <SelectTrigger id='serializer-strategy' className='w-fit'>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {Object.entries(STRATEGIES).map(([key, { label }]) => (
+                  <SelectItem key={key} value={key}>
+                    {label}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
 
-      <div style={{ display: 'flex', gap: '2rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend>Team (uses the selected default serializer)</legend>
-          {TEAMS.map((team) => (
-            <label key={team} style={{ display: 'block' }}>
-              <input
-                type='checkbox'
-                checked={selectedTeams.includes(team)}
-                onChange={() => updateTeams(toggle(selectedTeams, team))}
-              />
-              {' ' + team}
-            </label>
-          ))}
-        </fieldset>
-
-        <fieldset style={{ border: 'none', padding: 0, margin: 0 }}>
-          <legend>Role (always uses a multiKey override)</legend>
-          {ROLES.map((role) => (
-            <label key={role} style={{ display: 'block' }}>
-              <input
-                type='checkbox'
-                checked={selectedRoles.includes(role)}
-                onChange={() => updateRoles(toggle(selectedRoles, role))}
-              />
-              {' ' + role}
-            </label>
-          ))}
-        </fieldset>
-      </div>
-
-      <SortableDataTable table={table} />
-      <PaginationControls table={table} />
-
-      <p style={{ marginTop: '1rem', marginBottom: 0 }}>
-        Query string: <code>{currentSearch || '(none yet -- check a box above)'}</code>
-      </p>
-    </div>
+          <div className='flex flex-wrap gap-8'>
+            <CheckboxGroup
+              legend='Team (uses the selected default serializer)'
+              options={TEAMS}
+              selected={selectedTeams}
+              onToggle={(team) => updateTeams(toggle(selectedTeams, team))}
+              prefix='team'
+            />
+            <CheckboxGroup
+              legend='Role (always uses a multiKey override)'
+              options={ROLES}
+              selected={selectedRoles}
+              onToggle={(role) => updateRoles(toggle(selectedRoles, role))}
+              prefix='role'
+            />
+          </div>
+        </>
+      }
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <p className='m-0 text-[13px] text-muted-foreground'>
+            Query string: <code>{currentSearch || '(none yet -- check a box above)'}</code>
+          </p>
+        </>
+      }
+    />
   )
 }

@@ -1,8 +1,9 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { createMemoryStateStore, useTableCraft } from 'another-table-craft'
+import { createMemoryStateStore, SearchInput, useTableCraft } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 
 const columns: ColumnDef<Person>[] = [
   { accessorKey: 'name', header: 'Name' },
@@ -91,24 +92,27 @@ export default function ServerModeExample(): ReactNode {
   }, [state.pagination.pageIndex, state.pagination.pageSize, state.sorting, state.globalFilter])
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <input
-        type='text'
-        placeholder='Search (hits the fake server)…'
-        value={state.globalFilter}
-        onChange={(event) => table.setGlobalFilter(event.target.value)}
-        style={{ marginBottom: '1rem', padding: '0.4rem', width: '100%', boxSizing: 'border-box' }}
-        aria-label='Server-mode search'
-      />
-
-      <div style={{ opacity: loading ? 0.5 : 1, transition: 'opacity 150ms' }}>
-        <SortableDataTable table={table} />
-      </div>
-      <PaginationControls table={table} />
-
-      <p style={{ marginTop: '1rem', marginBottom: 0 }}>
-        {loading ? 'Fetching from the fake server…' : `${rowCount} total row(s) on the "server".`}
-      </p>
-    </div>
+    <TableCard
+      table={table}
+      loading={loading}
+      toolbar={
+        <SearchInput
+          placeholder='Search (hits the fake server)…'
+          aria-label='Server-mode search'
+          value={state.globalFilter}
+          onChange={(event) => table.setGlobalFilter(event.target.value)}
+          onClear={() => table.setGlobalFilter('')}
+          className='w-full'
+        />
+      }
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <p className='m-0 text-[13px] text-muted-foreground'>
+            {loading ? 'Fetching from the fake server…' : `${rowCount} total row(s) on the "server".`}
+          </p>
+        </>
+      }
+    />
   )
 }

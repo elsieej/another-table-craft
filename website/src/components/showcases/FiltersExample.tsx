@@ -1,8 +1,18 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { createMemoryStateStore, useTableCraft } from 'another-table-craft'
+import {
+  createMemoryStateStore,
+  useTableCraft,
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+  SearchInput
+} from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 
 const ROLES = ['Engineer', 'Researcher', 'Analyst']
 
@@ -15,39 +25,44 @@ const columns: ColumnDef<Person>[] = [
 export default function FiltersExample(): ReactNode {
   const store = useMemo(() => createMemoryStateStore(), [])
   const { table, state, setGlobalFilter, setColumnFilter } = useTableCraft({ data: people, columns, store })
+  const roleFilter = (state.columnFilters.find((filter) => filter.id === 'role')?.value as string) ?? 'all'
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <div style={{ display: 'flex', gap: '1rem', flexWrap: 'wrap', marginBottom: '1rem' }}>
-        <input
-          type='text'
-          placeholder='Search all columns…'
-          value={state.globalFilter}
-          onChange={(event) => setGlobalFilter(event.target.value)}
-          style={{ padding: '0.4rem', flex: 1, minWidth: '12rem' }}
-          aria-label='Global filter'
-        />
-
-        <select
-          value={(state.columnFilters.find((filter) => filter.id === 'role')?.value as string) ?? ''}
-          onChange={(event) => setColumnFilter('role', event.target.value || undefined)}
-          aria-label='Filter by role'
-        >
-          <option value=''>All roles</option>
-          {ROLES.map((role) => (
-            <option key={role} value={role}>
-              {role}
-            </option>
-          ))}
-        </select>
-      </div>
-
-      <SortableDataTable table={table} />
-      <PaginationControls table={table} />
-
-      <p style={{ marginTop: '1rem', marginBottom: 0 }}>
+    <>
+      <TableCard
+        table={table}
+        toolbar={
+          <div className='flex flex-wrap items-center justify-between gap-3'>
+            <SearchInput
+              placeholder='Search all columns…'
+              aria-label='Global filter'
+              value={state.globalFilter}
+              onChange={(event) => setGlobalFilter(event.target.value)}
+              onClear={() => setGlobalFilter('')}
+            />
+            <Select
+              value={roleFilter}
+              onValueChange={(value) => setColumnFilter('role', value === 'all' ? undefined : value)}
+            >
+              <SelectTrigger className='w-[160px]' aria-label='Filter by role'>
+                <SelectValue placeholder='All roles' />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value='all'>All roles</SelectItem>
+                {ROLES.map((role) => (
+                  <SelectItem key={role} value={role}>
+                    {role}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        }
+        footer={<PaginationFooter table={table} />}
+      />
+      <p style={{ marginTop: '0.75rem' }}>
         {table.getFilteredRowModel().rows.length} of {people.length} rows match.
       </p>
-    </div>
+    </>
   )
 }

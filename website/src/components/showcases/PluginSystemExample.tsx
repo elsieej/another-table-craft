@@ -2,7 +2,8 @@ import { useMemo, useRef, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import { createMemoryStateStore, useTableCraft, type TableConfigInput, type TablePlugin } from 'another-table-craft'
 import { people, type Person } from '../../data/people'
-import { PaginationControls, SortableDataTable } from './SortableDataTable'
+import { TableCard } from './TableCard'
+import { PaginationFooter } from './PaginationFooter'
 
 const columns: ColumnDef<Person>[] = [
   { accessorKey: 'name', header: 'Name' },
@@ -44,17 +45,21 @@ export default function PluginSystemExample(): ReactNode {
   const { table, config } = useTableCraft({ data: people, columns, store, config: instanceConfig })
 
   return (
-    <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      <SortableDataTable table={table} />
-      <PaginationControls table={table} />
-      <p style={{ marginTop: '1rem', marginBottom: 0, fontSize: '0.85em' }}>
-        Resolved: pageSizeOptions=<code>{JSON.stringify(config.pagination.pageSizeOptions)}</code>, defaultPageSize=
-        <code>{config.pagination.defaultPageSize}</code>
-      </p>
-      <p style={{ marginTop: '0.25rem', marginBottom: 0, fontSize: '0.85em' }}>
-        <code>override-size</code>'s <code>onResolve</code> last saw defaultPageSize=
-        <code>{String(lastResolvedRef.current)}</code> (also logged to your browser console).
-      </p>
-    </div>
+    <TableCard
+      table={table}
+      footer={
+        <>
+          <PaginationFooter table={table} />
+          <p className='m-0 text-[13px] text-muted-foreground'>
+            Resolved: pageSizeOptions=<code>{JSON.stringify(config.pagination.pageSizeOptions)}</code>, defaultPageSize=
+            <code>{config.pagination.defaultPageSize}</code>
+          </p>
+          <p className='m-0 text-[13px] text-muted-foreground'>
+            <code>override-size</code>'s <code>onResolve</code> last saw defaultPageSize=
+            <code>{String(lastResolvedRef.current)}</code> (also logged to your browser console).
+          </p>
+        </>
+      }
+    />
   )
 }
