@@ -39,7 +39,13 @@ export default function CustomParamNamesExample(): ReactNode {
             onValueChange={(value) => table.setPageSize(Number(value))}
           >
             <SelectTrigger id='custom-param-page-size' className='w-fit'>
-              <SelectValue />
+              {/* Explicit children: Base UI's value->label resolution only works when an item's value and
+                  its rendered label are the same string, which isn't true for '10'. */}
+              <SelectValue>
+                {table.getState().pagination.pageSize === 10
+                  ? '10 (default)'
+                  : `${table.getState().pagination.pageSize}`}
+              </SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value='3'>3</SelectItem>

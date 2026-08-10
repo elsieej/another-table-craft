@@ -43,7 +43,11 @@ export default function DebounceModeExample(): ReactNode {
             </Label>
             <Select value={`${debounceMs}`} onValueChange={(value) => setDebounceMs(Number(value))}>
               <SelectTrigger id='debounce-ms' className='w-fit'>
-                <SelectValue />
+                {/* Explicit children: Base UI's value->label resolution only works when an item's value
+                    and its rendered label are the same string, which isn't true here. */}
+                <SelectValue>
+                  {debounceMs === 0 ? '0 (instant)' : '2000 (slow, for comparison -- real default is 300)'}
+                </SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='0'>0 (instant)</SelectItem>

@@ -44,7 +44,9 @@ export default function HistoryModeExample(): ReactNode {
           </Label>
           <Select value={mode} onValueChange={(value) => setMode(value as 'push' | 'replace')}>
             <SelectTrigger id='history-mode' className='w-fit'>
-              <SelectValue />
+              {/* Explicit children: Base UI's value->label resolution only works when an item's value and
+                  its rendered label are the same string, which isn't true for 'replace'. */}
+              <SelectValue>{mode === 'replace' ? 'replace (default)' : 'push'}</SelectValue>
             </SelectTrigger>
             <SelectContent>
               <SelectItem value='replace'>replace (default)</SelectItem>

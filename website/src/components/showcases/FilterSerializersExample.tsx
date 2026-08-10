@@ -115,7 +115,9 @@ export default function FilterSerializersExample(): ReactNode {
             </Label>
             <Select value={strategyKey} onValueChange={(value) => setStrategyKey(value as keyof typeof STRATEGIES)}>
               <SelectTrigger id='serializer-strategy' className='w-fit'>
-                <SelectValue />
+                {/* Explicit children: Base UI's value->label resolution only works when an item's value and
+                    its rendered label are the same string, which isn't true for any strategy key here. */}
+                <SelectValue>{STRATEGIES[strategyKey].label}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 {Object.entries(STRATEGIES).map(([key, { label }]) => (

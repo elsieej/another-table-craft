@@ -45,7 +45,11 @@ export default function FiltersExample(): ReactNode {
               onValueChange={(value) => setColumnFilter('role', value === 'all' ? undefined : value)}
             >
               <SelectTrigger className='w-[160px]' aria-label='Filter by role'>
-                <SelectValue placeholder='All roles' />
+                {/* Explicit children, not a bare `placeholder`: Base UI's own value->label resolution only
+                    works when an item's value and its rendered label are the same string (true for every
+                    role here, but not for the 'all' sentinel), so it silently falls back to showing the
+                    raw value instead of "All roles". */}
+                <SelectValue>{roleFilter === 'all' ? 'All roles' : roleFilter}</SelectValue>
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value='all'>All roles</SelectItem>
