@@ -7,63 +7,111 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 @source '../components';
 
-/* Cherry-picked from Tailwind's Preflight (see the `@import` note above for why we don't ship all of
-   it): native form controls don't inherit the page's font/color by default, so every one of our own
-   primitives built on a real <button>/<input>/<select>/<textarea> would otherwise render in the
-   browser's UA font instead of matching the rest of the page. Deliberately narrow -- unlike the
-   headings/lists/tables Preflight also resets, this doesn't touch anything outside form controls. */
-button,
-input,
-select,
-optgroup,
-textarea,
-::file-selector-button {
-  font: inherit;
-  letter-spacing: inherit;
-  color: inherit;
+/* Both rules below MUST stay inside `@layer utilities` (the same layer `tailwindcss/utilities.css` is
+   imported into above). Cascade layers override specificity entirely: an *unlayered* rule beats a
+   *layered* one no matter how specific the layered one is. Tailwind's own generated utility classes
+   (`.text-primary-foreground`, `.border-input`, ...) live in this layer, so keeping these compatibility
+   rules unlayered would silently win over every one of those classes instead of losing to them the way a
+   plain `button{...}` element selector normally would against a class selector. */
+@layer utilities {
+  /* Cherry-picked from Tailwind's Preflight (see the `@import` note above for why we don't ship all of
+     it): native form controls don't inherit the page's font/color by default, so every one of our own
+     primitives built on a real <button>/<input>/<select>/<textarea> would otherwise render in the
+     browser's UA font instead of matching the rest of the page. Deliberately narrow -- unlike the
+     headings/lists/tables Preflight also resets, this doesn't touch anything outside form controls. */
+  button,
+  input,
+  select,
+  optgroup,
+  textarea,
+  ::file-selector-button {
+    font: inherit;
+    /* Inherit everything about the font *except* family: our own components sit in a
+       `:where([data-slot])` rule below setting `--font-sans` as the family, but that rule's
+       zero specificity loses to this element selector, so form controls need their own
+       override to actually pick up Geist instead of stopping at the host's font. */
+    font-family: var(--font-sans, inherit);
+    letter-spacing: inherit;
+    color: inherit;
+  }
+
+  /* Tailwind v4 changed `border`'s default color from v3's implicit gray-200 to the CSS default,
+     `currentColor` -- see https://tailwindcss.com/docs/upgrade-guide#border-color. Several of our own
+     primitives (Card, Select/DropdownMenu/Popover popups, Drawer, Button's outline variant) use a bare
+     `border` utility with no explicit color, so without this they render with a `currentColor` border
+     (i.e. the surrounding text color) instead of the intended subtle `--border` gray. Scoped to
+     `[data-slot]` -- our own components' own convention -- via `:where()` (zero specificity) so it never
+     reaches Docusaurus's own markup, and any component that DOES set its own border color utility still
+     wins. */
+  :where([data-slot]) {
+    border-color: var(--border);
+    /* Design-system type is Geist/Geist Mono throughout (see `--font-sans`/`--font-mono` below).
+       An inherited value always loses to *any* declared rule regardless of specificity, so this
+       zero-specificity selector is enough to win over the host page's own font for every element
+       that doesn't already have a more specific rule of its own (the form-control block above is
+       the one exception, which is why it repeats the declaration directly). Falls back to the host
+       font if `--font-sans` is ever unset by a consumer. */
+    font-family: var(--font-sans, inherit);
+  }
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
+  /* Geist / Geist Mono, per the design system (shadcn/ui's own default pair). No font files ship with
+     this package -- a consuming app is expected to load them (e.g. a Google Fonts `<link>`, as this
+     repo's own Docusaurus site does) the same way it would for any other web font. Falls back to the
+     system sans/mono stack if they're never loaded. */
+  --font-sans: 'Geist', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  --font-mono: 'Geist Mono', ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /* Light surfaces per the design system: an off-white canvas (#f4f4f5) with pure-white cards/popovers
+     sitting one step above it, rather than a flat all-white page. */
+  --background: oklch(0.967 0.001 286.375);
+  --foreground: oklch(0.21 0.006 285.885);
   --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
+  --card-foreground: oklch(0.21 0.006 285.885);
   --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
+  --popover-foreground: oklch(0.21 0.006 285.885);
+  /* Brand blue (Tailwind's blue-600/500), rationed to the one active/selected affordance per the
+     design system -- replaces an earlier violet-accent experiment. */
+  --primary: oklch(0.546 0.215 262.881);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.967 0.001 286.375);
+  --secondary-foreground: oklch(0.21 0.006 285.885);
+  --muted: oklch(0.967 0.001 286.375);
+  --muted-foreground: oklch(0.442 0.017 285.786);
+  --accent: oklch(0.967 0.001 286.375);
+  --accent-foreground: oklch(0.21 0.006 285.885);
   --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.92 0.004 286.32);
+  --input: oklch(0.92 0.004 286.32);
+  --ring: oklch(0.623 0.188 259.815);
 }
 
 .dark,
 [data-theme='dark'] {
-  --background: oklch(0.145 0 0);
+  /* Dark is the design system's reference theme: a near-black canvas (#0a0a0b) with the card one subtle
+     step above it (#0f0f11) and popovers/menus a further step up (#18181b) -- distinction is carried by
+     borders more than by surface lightness. */
+  --background: oklch(0.145 0.002 286.131);
   --foreground: oklch(0.985 0 0);
-  --card: oklch(0.205 0 0);
+  --card: oklch(0.169 0.004 285.951);
   --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.205 0 0);
+  --popover: oklch(0.21 0.006 285.885);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.922 0 0);
-  --primary-foreground: oklch(0.205 0 0);
-  --secondary: oklch(0.269 0 0);
+  /* Same brand blue as light mode -- the design system doesn't brighten it for dark backgrounds, since
+     it's always rendered as white-on-filled-blue rather than blue-on-background. */
+  --primary: oklch(0.546 0.215 262.881);
+  --primary-foreground: oklch(1 0 0);
+  --secondary: oklch(0.274 0.005 286.033);
   --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.269 0 0);
-  --muted-foreground: oklch(0.708 0 0);
-  --accent: oklch(0.269 0 0);
+  --muted: oklch(0.274 0.005 286.033);
+  --muted-foreground: oklch(0.712 0.013 286.067);
+  --accent: oklch(0.274 0.005 286.033);
   --accent-foreground: oklch(0.985 0 0);
   --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.556 0 0);
+  --border: oklch(0.27 0.007 285.898);
+  --input: oklch(0.27 0.007 285.898);
+  --ring: oklch(0.623 0.188 259.815);
 }
 
 @theme inline {
