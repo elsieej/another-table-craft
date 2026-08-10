@@ -14,7 +14,7 @@ to build your own presentation layer to get a table that looks like this:
 <StyledComponentsExample />
 
 ```tsx
-import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+import { useTableCraft, Card, CardFooter, DataTable, DataTablePagination } from 'another-table-craft'
 // once, anywhere in your app
 import 'another-table-craft/styles.css'
 
@@ -22,10 +22,12 @@ function PeopleTable({ data }: { data: Person[] }) {
   const { table } = useTableCraft({ data, columns })
 
   return (
-    <div>
+    <Card>
       <DataTable table={table} />
-      <DataTablePagination table={table} className='mt-4' />
-    </div>
+      <CardFooter>
+        <DataTablePagination table={table} className='w-full' />
+      </CardFooter>
+    </Card>
   )
 }
 ```

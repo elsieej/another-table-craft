@@ -1,6 +1,13 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { createMemoryStateStore, useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+import {
+  createMemoryStateStore,
+  useTableCraft,
+  Card,
+  CardFooter,
+  DataTable,
+  DataTablePagination
+} from 'another-table-craft'
 import { people, type Person } from '../../data/people'
 
 const columns: ColumnDef<Person>[] = [
@@ -15,9 +22,11 @@ export default function StyledComponentsExample(): ReactNode {
   const { table } = useTableCraft({ data: people, columns, store })
 
   return (
-    <div>
+    <Card>
       <DataTable table={table} />
-      <DataTablePagination table={table} className='mt-4' />
-    </div>
+      <CardFooter>
+        <DataTablePagination table={table} className='w-full' />
+      </CardFooter>
+    </Card>
   )
 }

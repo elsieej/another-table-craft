@@ -68,7 +68,7 @@ By default, `useTableCraft` reads and writes pagination/sorting/filter state to 
 The plain `<table>` above works, but the package also ships the Base UI + Tailwind components it's built with, wired to `useTableCraft`'s `table` instance:
 
 ```tsx
-import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+import { useTableCraft, Card, CardFooter, DataTable, DataTablePagination } from 'another-table-craft'
 // once, anywhere in your app
 import 'another-table-craft/styles.css'
 
@@ -76,10 +76,12 @@ function PeopleTable({ data }: { data: Person[] }) {
   const { table } = useTableCraft({ data, columns })
 
   return (
-    <div>
+    <Card>
       <DataTable table={table} />
-      <DataTablePagination table={table} className='mt-4' />
-    </div>
+      <CardFooter>
+        <DataTablePagination table={table} className='w-full' />
+      </CardFooter>
+    </Card>
   )
 }
 ```
