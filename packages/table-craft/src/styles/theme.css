@@ -1,4 +1,10 @@
-@import 'tailwindcss';
+/* No `@import 'tailwindcss'` (which pulls in Preflight): this stylesheet is meant to be dropped into a
+   host page (like this repo's own Docusaurus site) that has its own base/reset CSS. Preflight's global,
+   unscoped element resets (h1-h6, ul/ol, button, table, ...) would win the cascade over the host's own
+   styles -- layer declaration order determines cross-layer priority regardless of selector specificity,
+   and Preflight's `base` layer is declared after most hosts' own layers/rules. */
+@import 'tailwindcss/theme.css' layer(theme);
+@import 'tailwindcss/utilities.css' layer(utilities);
 @source '../components';
 
 :root {
