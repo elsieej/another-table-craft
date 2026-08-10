@@ -7,6 +7,22 @@
 @import 'tailwindcss/utilities.css' layer(utilities);
 @source '../components';
 
+/* Cherry-picked from Tailwind's Preflight (see the `@import` note above for why we don't ship all of
+   it): native form controls don't inherit the page's font/color by default, so every one of our own
+   primitives built on a real <button>/<input>/<select>/<textarea> would otherwise render in the
+   browser's UA font instead of matching the rest of the page. Deliberately narrow -- unlike the
+   headings/lists/tables Preflight also resets, this doesn't touch anything outside form controls. */
+button,
+input,
+select,
+optgroup,
+textarea,
+::file-selector-button {
+  font: inherit;
+  letter-spacing: inherit;
+  color: inherit;
+}
+
 :root {
   --background: oklch(1 0 0);
   --foreground: oklch(0.145 0 0);
