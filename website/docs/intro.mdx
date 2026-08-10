@@ -69,6 +69,10 @@ By default, `useTableCraft` reads and writes pagination/sorting/filter state to 
 browser (falling back to an in-memory store during SSR). Pass a `store` (e.g. `createMemoryStateStore()`) or a
 fully controlled `state`/`onStateChange` pair to opt out.
 
+The plain `<table>` above is what the headless core hands you by default. If you'd rather not build your own
+presentation layer, the package also exports a full set of styled components built on it — see
+[Styled components](./showcases/styled-components).
+
 Here's that same hook, live, wired to an in-memory store so it doesn't touch this page's own URL:
 
 <BasicTableExample />

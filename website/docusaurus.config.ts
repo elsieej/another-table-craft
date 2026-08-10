@@ -1,8 +1,14 @@
+import { createRequire } from 'node:module'
 import { themes as prismThemes } from 'prism-react-renderer'
 import type { Config } from '@docusaurus/types'
 import type * as Preset from '@docusaurus/preset-classic'
 
 // This runs in Node.js - Don't use client-side code here (browser APIs, JSX...)
+
+// `customCss` resolves its entries as filesystem paths relative to this file, not as npm
+// specifiers -- so the library's `./styles.css` export subpath needs an explicit resolve.
+const require = createRequire(import.meta.url)
+const tableCraftStyles = require.resolve('another-table-craft/styles.css')
 
 const config: Config = {
   title: 'another-table-craft',
@@ -44,7 +50,9 @@ const config: Config = {
         },
         blog: false,
         theme: {
-          customCss: './src/css/custom.css'
+          // Order matters: the library's precompiled utilities load first so page-level
+          // overrides in custom.css can still win.
+          customCss: [tableCraftStyles, './src/css/custom.css']
         }
       } satisfies Preset.Options
     ]

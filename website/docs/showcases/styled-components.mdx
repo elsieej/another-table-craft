@@ -1,0 +1,55 @@
+---
+sidebar_position: 1.5
+sidebar_label: Styled components
+---
+
+import StyledComponentsExample from '@site/src/components/showcases/StyledComponentsExample'
+
+# Styled components
+
+Every other page in this section wires `useTableCraft` up to a plain `<table>` by hand — that's the point of a
+headless core. But the package also ships the Base UI + Tailwind components it's built with, so you don't have
+to build your own presentation layer to get a table that looks like this:
+
+<StyledComponentsExample />
+
+```tsx
+import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+// once, anywhere in your app
+import 'another-table-craft/styles.css'
+
+function PeopleTable({ data }: { data: Person[] }) {
+  const { table } = useTableCraft({ data, columns })
+
+  return (
+    <div>
+      <DataTable table={table} />
+      <DataTablePagination table={table} className='mt-4' />
+    </div>
+  )
+}
+```
+
+## What's exported
+
+- **`DataTable`** — renders sortable headers and rows straight from a TanStack `table` instance (the same one
+  `useTableCraft` returns). Pass `sortable={false}` to force plain, non-interactive headers regardless of each
+  column's own `enableSorting` — useful when gating on `config.features.sorting`, which the library itself
+  doesn't enforce (see the [config cascade showcase](./config-cascade)). An `emptyMessage` prop covers the
+  no-rows case; a `caption` prop renders a `<caption>` below the table.
+- **`DataTablePagination`** — Previous/Next buttons and a page-size `Select`, wired to the table's own
+  `setPageSize`/`previousPage`/`nextPage`. Both components take a plain TanStack `Table<TData>`, so they compose
+  with `useTableCraft` but don't require it.
+- **Lower-level primitives** — `Button`, `Table` (and `TableHeader`/`TableBody`/`TableRow`/`TableCell`/...),
+  `Select`, `Badge`, `Card`, `Input`, `Checkbox`, `DropdownMenu`, `Popover`, `Tooltip`, `Skeleton`, `Separator`,
+  `Label`, `Command`, `Calendar`, and `Drawer` are all exported individually too, for building a custom layout
+  instead of using `DataTable` directly.
+
+## Styling
+
+`another-table-craft/styles.css` is Tailwind CSS precompiled at publish time — import it once, and nothing else
+in your app needs Tailwind or PostCSS configured to use it. This docs site imports it once in
+`docusaurus.config.ts`; a typical app imports it once at its root.
+
+Dark mode follows either a `.dark` class or a `data-theme="dark"` attribute on an ancestor element (commonly
+`<html>`) — toggle whichever one your app already uses, and the components pick it up automatically.

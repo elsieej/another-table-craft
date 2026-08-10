@@ -7,7 +7,7 @@ A production-ready, SPA-first React data table system built on [TanStack Table](
 - **Headless core** — `useTableCraft` owns the single `useReactTable()` call and exposes state + handlers, fully decoupled from any specific state-storage mechanism or presentation layer.
 - **Query-param state by default** — a zero-dependency URL-backed store (`createUrlStateStore`) syncs pagination, sorting, filters, and view mode to the URL via the native History API, so table state survives a refresh or a shared link without any setup.
 - **Config cascade** — a 4-layer config system (defaults → provider → instance → plugins) lets you set sane global defaults once and override them per table instance.
-- **Presentation primitives** — `src/components/ui/` holds a full set of table-adjacent primitives (button, card, table, dialog-like drawer, dropdown menu, select, calendar, and more) built on Base UI. These are not currently exported through the package's public API surface.
+- **Presentation layer, opt-in** — `src/components/ui/` holds a full set of table-adjacent primitives (button, card, table, dialog-like drawer, dropdown menu, select, calendar, and more) built on Base UI + Tailwind, plus a small composed `DataTable`/`DataTablePagination` wired to `useTableCraft`'s own `table` instance. All of it is exported from the package root — see [Styled components](#styled-components) below. The headless core works with none of this; reach for it only if you also want this library's look and feel.
 
 ## Install
 
@@ -62,6 +62,33 @@ function PeopleTable({ data }: { data: Person[] }) {
 ```
 
 By default, `useTableCraft` reads and writes pagination/sorting/filter state to the URL's query string in the browser (falling back to an in-memory store during SSR). Pass a `store` (e.g. `createMemoryStateStore()`) or fully controlled `state`/`onStateChange` to opt out.
+
+## Styled components
+
+The plain `<table>` above works, but the package also ships the Base UI + Tailwind components it's built with, wired to `useTableCraft`'s `table` instance:
+
+```tsx
+import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+// once, anywhere in your app
+import 'another-table-craft/styles.css'
+
+function PeopleTable({ data }: { data: Person[] }) {
+  const { table } = useTableCraft({ data, columns })
+
+  return (
+    <div>
+      <DataTable table={table} />
+      <DataTablePagination table={table} className='mt-4' />
+    </div>
+  )
+}
+```
+
+- `DataTable` renders sortable headers (pass `sortable={false}` to force plain, non-interactive headers) and rows from the `table` instance, with an empty-state row.
+- `DataTablePagination` renders Previous/Next and a page-size `Select`, wired to the table's own `setPageSize`/`previousPage`/`nextPage`.
+- Both are built from lower-level primitives (`Button`, `Table`, `Select`, `Badge`, `Card`, and more) also exported individually from the package root, for consumers who want to assemble their own layout instead.
+- Dark mode follows either a `.dark` class or a `data-theme="dark"` attribute on an ancestor element (e.g. `<html>`) — pick whichever your app already toggles.
+- `another-table-craft/styles.css` is precompiled at publish time; it doesn't require Tailwind or PostCSS in the consuming app.
 
 ## Project structure
 

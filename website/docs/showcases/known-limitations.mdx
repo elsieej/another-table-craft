@@ -12,8 +12,8 @@ today, and seeding ideas for what to build next.
 
 ## No open gaps right now
 
-Building this docs site surfaced four real gaps between what the library declares and what it actually does.
-All four have since been fixed:
+Building this docs site surfaced five real gaps between what the library declares and what it actually does.
+All five have since been fixed:
 
 - Most `TableConfig.features` flags were declared but never enforced — resolved by documenting them plainly as
   consumer hints ([#42](https://github.com/elsieej/another-table-craft/issues/42)), matching what the
@@ -29,6 +29,12 @@ All four have since been fixed:
   ([#59](https://github.com/elsieej/another-table-craft/issues/59)). `search.debounceMs` was deliberately left
   as a consumer hint instead — it turned out to be a different concept (your own search input's debounce)
   that only coincidentally shared a name with the URL store's write-debounce timing.
+- `components/ui/` held a full set of table-adjacent primitives built on Base UI, but none of them were exported
+  through the package's public API, and `theme.css` shipped as raw Tailwind v4 source with no compiled utility
+  classes — resolved by exporting the primitives plus a new composed `DataTable`/`DataTablePagination`, and
+  precompiling `styles.css` at publish time ([#61](https://github.com/elsieej/another-table-craft/issues/61)).
+  Demonstrated on the [styled components showcase](./styled-components), which this docs site's own showcases
+  now render with instead of a hand-rolled `<table>`.
 
 This section stays here, empty, on purpose: the point of this page isn't a permanent record of what's broken,
 it's an honest snapshot of what's safe to rely on _right now_. If a future showcase surfaces a new gap, it
@@ -38,10 +44,6 @@ goes here until it's resolved too.
 
 Not filed as issues yet — just things this initiative surfaced as plausible next steps:
 
-- **Export the Base UI presentation primitives.** `components/ui/` holds a full set of table-adjacent
-  components (button, card, table, dropdown menu, and more), but none of them are exported through the
-  package's public API today — only the headless core is. A consumer who wants this library's actual look and
-  feel, not just its state management, currently can't get it from the package itself.
 - **A documented pattern for persisting row selection.** `TableStateSnapshot` deliberately excludes row
   selection as ephemeral UI state (a deliberate, correct design choice) — but that leaves "how do I keep a
   user's selection across a page reload if I actually want to" entirely unanswered. A short recipe, not

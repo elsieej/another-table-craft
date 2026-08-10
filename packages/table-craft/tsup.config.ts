@@ -1,8 +1,17 @@
-import { copyFileSync, mkdirSync } from 'node:fs'
+import { mkdirSync } from 'node:fs'
+import { execFile } from 'node:child_process'
+import { createRequire } from 'node:module'
+import { dirname, join } from 'node:path'
+import { promisify } from 'node:util'
 import { defineConfig } from 'tsup'
 
+const execFileAsync = promisify(execFile)
+const require = createRequire(import.meta.url)
+// `@tailwindcss/cli` only publishes a `bin` entry, not an importable subpath export.
+const tailwindCli = join(dirname(require.resolve('@tailwindcss/cli/package.json')), 'dist/index.mjs')
+
 const outDir = 'dist'
-// Published verbatim as the `./styles.css` export subpath in package.json.
+// Compiled by Tailwind into the `./styles.css` export subpath in package.json.
 const THEME_SOURCE = 'src/styles/theme.css'
 
 export default defineConfig({
@@ -20,6 +29,6 @@ export default defineConfig({
   },
   onSuccess: async () => {
     mkdirSync(outDir, { recursive: true })
-    copyFileSync(THEME_SOURCE, `${outDir}/styles.css`)
+    await execFileAsync(process.execPath, [tailwindCli, '-i', THEME_SOURCE, '-o', `${outDir}/styles.css`, '--minify'])
   }
 })

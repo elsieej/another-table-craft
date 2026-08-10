@@ -80,9 +80,9 @@ function RtlTable(): ReactNode {
 
   return (
     <div style={{ border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8, padding: '1rem' }}>
-      {/* textAlign={false}: no hardcoded left-alignment, so the browser's own direction-aware
-          default alignment is what actually flips -- that's the whole point of this demo. */}
-      <SortableDataTable table={table} sortable={false} dir={dir} textAlign={false} />
+      {/* Column headers use the CSS logical `text-start` property (not `text-left`), so this
+          `dir` is what actually flips the alignment -- that's the whole point of this demo. */}
+      <SortableDataTable table={table} sortable={false} dir={dir} />
     </div>
   )
 }
