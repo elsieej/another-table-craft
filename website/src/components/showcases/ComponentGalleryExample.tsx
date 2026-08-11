@@ -3,7 +3,7 @@ import { format } from 'date-fns'
 import { CalendarIcon, ChevronsUpDownIcon } from 'lucide-react'
 import { Button } from 'another-table-craft'
 import { Badge } from '../ui/badge'
-import { Calendar } from '../ui/calendar'
+import { Calendar, type DateRange } from '../ui/calendar'
 import { Command, CommandCollection, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command'
 import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '../ui/drawer'
 import {
@@ -20,12 +20,18 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/
 
 const FRUITS = ['Apple', 'Banana', 'Blueberry', 'Cherry']
 
+function formatDateRange(range: DateRange | undefined): string {
+  if (!range?.from) return 'Pick a date range'
+  if (!range.to) return format(range.from, 'MMM d, yyyy')
+  return `${format(range.from, 'MMM d, yyyy')} - ${format(range.to, 'MMM d, yyyy')}`
+}
+
 /** Every exported primitive, rendered together -- a live reference, and a regression check for the
  * one thing a per-page code snippet won't catch: something breaking site-wide across all of them. */
 export default function ComponentGalleryExample(): ReactNode {
   const [fruit, setFruit] = useState('')
   const [fruitOpen, setFruitOpen] = useState(false)
-  const [date, setDate] = useState<Date | undefined>(undefined)
+  const [dateRange, setDateRange] = useState<DateRange | undefined>(undefined)
   const [dateOpen, setDateOpen] = useState(false)
 
   return (
@@ -111,20 +117,25 @@ export default function ComponentGalleryExample(): ReactNode {
             </PopoverContent>
           </Popover>
 
-          {/* Same click-to-open pattern for the date picker: the trigger shows the picked date (or a
-              placeholder) and the Calendar itself only renders once the popover is open. */}
+          {/* Same click-to-open pattern for the date range picker: the trigger shows the picked
+              range (or a placeholder) and the Calendar itself only renders once the popover is
+              open. mode='range' turns day clicks into a two-step pick: the first click sets the
+              start, the second sets the end -- the popover closes once both are set. */}
           <Popover open={dateOpen} onOpenChange={setDateOpen}>
-            <PopoverTrigger render={<Button variant='outline' className='w-[220px] justify-start gap-2 font-normal' />}>
-              <CalendarIcon className='size-4 shrink-0 opacity-50' />
-              {date ? format(date, 'PPP') : 'Pick a date'}
+            <PopoverTrigger render={<Button variant='outline' className='w-[260px] justify-start gap-2 font-normal' />}>
+              <CalendarIcon className='size-4 shrink-0 text-muted-foreground' />
+              {formatDateRange(dateRange)}
             </PopoverTrigger>
             <PopoverContent align='start' className='w-auto p-0'>
               <Calendar
+                mode='range'
                 className='border-none shadow-none'
-                selected={date}
-                onSelect={(value) => {
-                  setDate(value)
-                  setDateOpen(false)
+                selected={dateRange}
+                onSelect={(range) => {
+                  setDateRange(range)
+                  if (range?.from && range?.to) {
+                    setDateOpen(false)
+                  }
                 }}
               />
             </PopoverContent>

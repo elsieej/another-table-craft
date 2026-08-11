@@ -58,4 +58,65 @@ describe('Calendar', () => {
     await user.click(disabledDay)
     expect(onSelect).not.toHaveBeenCalled()
   })
+
+  describe('range mode', () => {
+    it('sets `from` on the first click and `to` on the second', async () => {
+      const user = userEvent.setup()
+      const onSelect = vi.fn()
+      const { rerender } = render(<Calendar mode='range' defaultMonth={JAN_2024} onSelect={onSelect} />)
+
+      await user.click(screen.getByText('10'))
+      expect(onSelect).toHaveBeenLastCalledWith({ from: new Date(2024, 0, 10), to: undefined })
+
+      // Simulate the parent feeding the just-picked `from` back in as `selected`, same as real
+      // controlled usage -- a fresh, uncontrolled render wouldn't know a `from` was already picked.
+      rerender(
+        <Calendar mode='range' defaultMonth={JAN_2024} selected={{ from: new Date(2024, 0, 10) }} onSelect={onSelect} />
+      )
+      await user.click(screen.getByText('15'))
+      expect(onSelect).toHaveBeenLastCalledWith({ from: new Date(2024, 0, 10), to: new Date(2024, 0, 15) })
+    })
+
+    it('swaps `from`/`to` when the second click lands before the first', async () => {
+      const user = userEvent.setup()
+      const onSelect = vi.fn()
+      render(
+        <Calendar mode='range' defaultMonth={JAN_2024} selected={{ from: new Date(2024, 0, 15) }} onSelect={onSelect} />
+      )
+
+      await user.click(screen.getByText('10'))
+      expect(onSelect).toHaveBeenCalledWith({ from: new Date(2024, 0, 10), to: new Date(2024, 0, 15) })
+    })
+
+    it('marks the endpoints and the days between them', () => {
+      render(
+        <Calendar
+          mode='range'
+          defaultMonth={JAN_2024}
+          selected={{ from: new Date(2024, 0, 10), to: new Date(2024, 0, 12) }}
+        />
+      )
+
+      expect(screen.getByText('10')).toHaveAttribute('data-selected', '')
+      expect(screen.getByText('12')).toHaveAttribute('data-selected', '')
+      expect(screen.getByText('11')).toHaveAttribute('data-range-middle', '')
+      expect(screen.getByText('11')).not.toHaveAttribute('data-selected')
+    })
+
+    it('starts a fresh range when clicking again after a full range is already picked', async () => {
+      const user = userEvent.setup()
+      const onSelect = vi.fn()
+      render(
+        <Calendar
+          mode='range'
+          defaultMonth={JAN_2024}
+          selected={{ from: new Date(2024, 0, 10), to: new Date(2024, 0, 12) }}
+          onSelect={onSelect}
+        />
+      )
+
+      await user.click(screen.getByText('20'))
+      expect(onSelect).toHaveBeenCalledWith({ from: new Date(2024, 0, 20), to: undefined })
+    })
+  })
 })
