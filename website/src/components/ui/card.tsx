@@ -63,13 +63,13 @@ function CardContent({ className, ...props }: ComponentProps<'div'>) {
 }
 
 function CardFooter({ className, ...props }: ComponentProps<'div'>) {
-  // px-5/py-3 + border-t: `--atc-card__footer` padding (--atc-space-9/--atc-space-6, 20px/12px) with an
-  // always-on top border -- the design system's footer is a permanently separated band (it's where
-  // pagination lives), not an optional divider like the header's `.border-b` escape hatch.
+  // px-2/py-3 + border-t: tighter than `--atc-card__footer`'s default px-5 -- an always-on top border,
+  // since the design system's footer is a permanently separated band (it's where pagination lives),
+  // not an optional divider like the header's `.border-b` escape hatch.
   return (
     <div
       data-slot='card-footer'
-      className={cn('flex items-center border-t border-border px-5 py-3', className)}
+      className={cn('flex items-center border-t border-border px-2 py-3', className)}
       {...props}
     />
   )

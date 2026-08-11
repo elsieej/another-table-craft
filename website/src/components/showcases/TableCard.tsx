@@ -30,7 +30,7 @@ interface TableCardProps<TData> {
 export function TableCard<TData>({ table, toolbar, sortable = true, dir, footer, loading }: TableCardProps<TData>) {
   return (
     <Card>
-      {toolbar ? <div className='flex flex-col gap-3 border-b border-border px-5 py-4'>{toolbar}</div> : null}
+      {toolbar ? <div className='flex flex-col gap-3 border-b border-border px-2 py-4'>{toolbar}</div> : null}
       <div dir={dir} className={loading ? 'opacity-50 transition-opacity' : 'transition-opacity'}>
         <DataTable table={table} sortable={sortable} />
       </div>

@@ -60,9 +60,10 @@ export default function ResponsiveExample(): ReactNode {
     )
   }
 
-  // Segmented Table/Cards control -- lives in the toolbar next to search (Tablet/Desktop) or next
-  // to the filter button (Mobile), matching the design system's toolbar layout rather than
-  // floating above the table as its own row of buttons.
+  // Segmented Table/Cards control -- sits first on the toolbar's left side, with search (or, at
+  // Mobile, the filter button) nested right next to it. The right side of the toolbar is left for
+  // actual filter inputs (selects, date ranges, ...), same as the design system's toolbar layout;
+  // this showcase only demonstrates the global search, so nothing occupies it here.
   const viewToggle = (
     <ViewToggle
       value={view}
@@ -132,14 +133,14 @@ export default function ResponsiveExample(): ReactNode {
   )
 
   const toolbar = isMobile ? (
-    <div className='flex items-center justify-between gap-3'>
-      {filterButton}
+    <div className='flex flex-wrap items-center justify-between gap-3'>
       {viewToggle}
+      {filterButton}
     </div>
   ) : (
-    <div className='flex flex-wrap items-center justify-between gap-3'>
-      {renderSearchField()}
+    <div className='flex flex-wrap items-center gap-3'>
       {viewToggle}
+      {renderSearchField()}
     </div>
   )
 
@@ -177,7 +178,7 @@ export default function ResponsiveExample(): ReactNode {
             <TableCard table={table} toolbar={toolbar} footer={<PaginationFooter table={table} />} />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div className='rounded-[10px] border bg-card px-5 py-4'>{toolbar}</div>
+              <div className='rounded-[10px] border bg-card px-2 py-4'>{toolbar}</div>
               <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
                 {table.getRowModel().rows.map((row) => (
                   <Card key={row.id}>
@@ -198,7 +199,7 @@ export default function ResponsiveExample(): ReactNode {
                   </Card>
                 ))}
               </div>
-              <div className='rounded-[10px] border bg-card px-5 py-3'>
+              <div className='rounded-[10px] border bg-card px-2 py-3'>
                 <PaginationFooter table={table} />
               </div>
             </div>
