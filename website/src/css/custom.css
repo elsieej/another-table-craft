@@ -32,3 +32,12 @@
   --ifm-color-primary-lightest: #dbeafe;
   --docusaurus-highlighted-code-line-bg: rgba(0, 0, 0, 0.3);
 }
+
+/* Every showcase page renders its live example as a bare top-level <div> in the MDX flow --
+   unlike a <p>, it gets none of Infima's paragraph margins, so it butts directly against
+   whatever follows (usually prose, sometimes a code block) with zero gap. Excludes
+   .theme-code-block itself (also a top-level div) so code blocks don't get this margin twice
+   over when two appear back to back. */
+.markdown > div:not(.theme-code-block) {
+  margin-bottom: 2rem;
+}
