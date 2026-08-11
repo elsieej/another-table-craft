@@ -12,6 +12,13 @@
    styling. Deleting one of these "unused" files as dead code silently unstyles the docs site --
    no typecheck, build, or lint failure will catch it. */
 @source '../components';
+/* The docs site (`website/`) has no Tailwind build of its own -- it only consumes this package's
+   precompiled `styles.css`. Without this second scan, any utility class used only in a showcase or
+   website-local component (e.g. `gap-3`, never used anywhere under `../components`) silently compiles
+   to nothing: no typecheck, build, or lint error, the class is just missing from the page. Scanning
+   `website/src` directly means every class the docs site actually uses gets emitted, regardless of
+   whether this package's own components happen to use it too. */
+@source '../../../../website/src';
 
 /* Both rules below MUST stay inside `@layer utilities` (the same layer `tailwindcss/utilities.css` is
    imported into above). Cascade layers override specificity entirely: an *unlayered* rule beats a
