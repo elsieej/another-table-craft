@@ -119,8 +119,16 @@ export default function ComponentGalleryExample(): ReactNode {
         </div>
 
         {/* Command has no border of its own by design -- it's meant to sit inside a bordered
-            container (a dialog, a popover, ...) rather than impose one itself. */}
-        <div style={{ maxWidth: 320, border: '1px solid var(--ifm-color-emphasis-300)', borderRadius: 8 }}>
+            container (a dialog, a popover, ...) rather than impose one itself. Styled to match
+            that container -- the same rounded-md/border/bg-popover/shadow-md shell SelectContent
+            and DropdownMenuContent use -- instead of Infima's own border variable, which doesn't
+            track this package's design tokens (dark mode, the blue brand, ...) at all.
+            CommandInput's own `outline-none` drops the browser's default focus ring and doesn't
+            replace it with anything (unlike Input/SearchInput/Select, which all get the brand-blue
+            focus-visible ring), so the ring is applied here instead with `focus-within` -- on the
+            *whole* shell, input and list together, rather than just the input's own strip, so
+            focus reads as "this Command popover" and not just "this text field". */}
+        <div className='max-w-[320px] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50'>
           <Command items={FRUITS}>
             <CommandInput placeholder='Search fruit...' />
             <CommandList>

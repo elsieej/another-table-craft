@@ -48,7 +48,11 @@ function CommandEmpty({ className, ...props }: ComponentProps<typeof ComboboxPri
   return (
     <ComboboxPrimitive.Empty
       data-slot='command-empty'
-      className={cn('py-6 text-center text-sm', className)}
+      // This element must stay mounted even when there are matches (Base UI uses it as an
+      // aria-live region), so it renders as an empty <div> with no children rather than being
+      // removed -- `empty:py-0` collapses the py-6 padding in that state instead of leaving a
+      // blank gap between the input and the results.
+      className={cn('py-6 text-center text-sm empty:py-0', className)}
       {...props}
     />
   )
