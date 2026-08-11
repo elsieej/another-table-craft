@@ -142,13 +142,13 @@ export default function ComponentGalleryExample(): ReactNode {
           </Popover>
         </div>
 
-        <Separator />
-
         <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem', maxWidth: 320 }}>
           <Skeleton style={{ height: '1rem', width: '100%' }} />
           <Skeleton style={{ height: '1rem', width: '80%' }} />
           <Skeleton style={{ height: '1rem', width: '60%' }} />
         </div>
+
+        <Separator />
       </div>
     </TooltipProvider>
   )
