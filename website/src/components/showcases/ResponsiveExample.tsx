@@ -36,9 +36,15 @@ const FRAMES = [
 
 type View = 'Table' | 'Card'
 
+// How many cards sit side by side in Card view -- a plain CSS grid column count, not a Tailwind
+// class, so it can vary by state without needing every `grid-cols-N` value to exist somewhere in
+// the package's own source (see the `@source` comment in packages/table-craft/src/styles/theme.css).
+const CARD_COLUMN_OPTIONS = [1, 2, 3, 4] as const
+
 export default function ResponsiveExample(): ReactNode {
   const [frame, setFrame] = useState<(typeof FRAMES)[number]>(FRAMES[0])
   const [view, setView] = useState<View>('Table')
+  const [cardColumns, setCardColumns] = useState<(typeof CARD_COLUMN_OPTIONS)[number]>(2)
   const store = useMemo(() => createMemoryStateStore({ pagination: { pageIndex: 0, pageSize: 5 } }), [])
   const { table, state, setGlobalFilter } = useTableCraft({ data: people, columns, store })
 
@@ -162,6 +168,23 @@ export default function ResponsiveExample(): ReactNode {
           ))}
         </div>
 
+        {view === 'Card' ? (
+          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
+            <span className='text-[13px] text-muted-foreground'>Columns:</span>
+            {CARD_COLUMN_OPTIONS.map((count) => (
+              <Button
+                key={count}
+                type='button'
+                size='sm'
+                variant={count === cardColumns ? 'default' : 'outline'}
+                onClick={() => setCardColumns(count)}
+              >
+                {count}
+              </Button>
+            ))}
+          </div>
+        ) : null}
+
         {/* This border is only here to make the chosen frame width visible on the page -- the
             scrolling behavior itself comes from Table's own wrapper (overflow-x-auto), which is
             exactly what a real narrow viewport gets too, framed or not. */}
@@ -179,7 +202,13 @@ export default function ResponsiveExample(): ReactNode {
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
               <div className='rounded-[10px] border bg-card px-2 py-4'>{toolbar}</div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+              <div
+                style={{
+                  display: 'grid',
+                  gridTemplateColumns: `repeat(${cardColumns}, minmax(0, 1fr))`,
+                  gap: '0.75rem'
+                }}
+              >
                 {table.getRowModel().rows.map((row) => (
                   <Card key={row.id}>
                     <CardHeader>
