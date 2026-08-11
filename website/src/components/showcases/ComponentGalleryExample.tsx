@@ -1,51 +1,32 @@
 import { useState, type ReactNode } from 'react'
+import { format } from 'date-fns'
+import { CalendarIcon, ChevronsUpDownIcon } from 'lucide-react'
+import { Button } from 'another-table-craft'
+import { Badge } from '../ui/badge'
+import { Calendar } from '../ui/calendar'
+import { Command, CommandCollection, CommandEmpty, CommandInput, CommandItem, CommandList } from '../ui/command'
+import { Drawer, DrawerContent, DrawerDescription, DrawerHeader, DrawerTitle, DrawerTrigger } from '../ui/drawer'
 import {
-  Badge,
-  Button,
-  Calendar,
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-  Checkbox,
-  Command,
-  CommandCollection,
-  CommandEmpty,
-  CommandInput,
-  CommandItem,
-  CommandList,
-  Drawer,
-  DrawerContent,
-  DrawerDescription,
-  DrawerHeader,
-  DrawerTitle,
-  DrawerTrigger,
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
   DropdownMenuSeparator,
-  DropdownMenuTrigger,
-  Input,
-  Label,
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-  Separator,
-  Skeleton,
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger
-} from 'another-table-craft'
+  DropdownMenuTrigger
+} from '../ui/dropdown-menu'
+import { Popover, PopoverContent, PopoverTrigger } from '../ui/popover'
+import { Separator } from '../ui/separator'
+import { Skeleton } from '../ui/skeleton'
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '../ui/tooltip'
 
 const FRUITS = ['Apple', 'Banana', 'Blueberry', 'Cherry']
 
 /** Every exported primitive, rendered together -- a live reference, and a regression check for the
  * one thing a per-page code snippet won't catch: something breaking site-wide across all of them. */
 export default function ComponentGalleryExample(): ReactNode {
-  const [checked, setChecked] = useState(false)
+  const [fruit, setFruit] = useState('')
+  const [fruitOpen, setFruitOpen] = useState(false)
+  const [date, setDate] = useState<Date | undefined>(undefined)
+  const [dateOpen, setDateOpen] = useState(false)
 
   return (
     <TooltipProvider>
@@ -62,29 +43,6 @@ export default function ComponentGalleryExample(): ReactNode {
           <Badge variant='outline'>Outline</Badge>
           <Badge variant='destructive'>Destructive</Badge>
         </div>
-
-        <Card style={{ maxWidth: 360 }}>
-          <CardHeader>
-            <CardTitle>Card title</CardTitle>
-            <CardDescription>A short card description.</CardDescription>
-          </CardHeader>
-          <CardContent style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-            <div>
-              <Label htmlFor='gallery-email'>Email</Label>
-              <Input id='gallery-email' placeholder='you@example.com' />
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Checkbox id='gallery-terms' checked={checked} onCheckedChange={(v) => setChecked(v === true)} />
-              <Label htmlFor='gallery-terms'>Accept terms</Label>
-            </div>
-          </CardContent>
-          <CardFooter style={{ display: 'flex', gap: '0.5rem' }}>
-            <Button size='sm'>Save</Button>
-            <Button size='sm' variant='outline'>
-              Cancel
-            </Button>
-          </CardFooter>
-        </Card>
 
         <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
           <Popover>
@@ -118,27 +76,60 @@ export default function ComponentGalleryExample(): ReactNode {
           </Drawer>
         </div>
 
-        {/* Command has no border of its own by design -- it's meant to sit inside a bordered
-            container (a dialog, a popover, ...) rather than impose one itself. Styled to match
-            that container -- the same rounded-md/border/bg-popover/shadow-md shell SelectContent
-            and DropdownMenuContent use -- instead of Infima's own border variable, which doesn't
-            track this package's design tokens (dark mode, the blue brand, ...) at all.
-            CommandInput's own `outline-none` drops the browser's default focus ring and doesn't
-            replace it with anything (unlike Input/SearchInput/Select, which all get the brand-blue
-            focus-visible ring), so the ring is applied here instead with `focus-within` -- on the
-            *whole* shell, input and list together, rather than just the input's own strip, so
-            focus reads as "this Command popover" and not just "this text field". */}
-        <div className='max-w-[320px] overflow-hidden rounded-md border border-border bg-popover text-popover-foreground shadow-md focus-within:border-ring focus-within:ring-[3px] focus-within:ring-ring/50'>
-          <Command items={FRUITS}>
-            <CommandInput placeholder='Search fruit...' />
-            <CommandList>
-              <CommandEmpty>No results found.</CommandEmpty>
-              <CommandCollection>{(item: string) => <CommandItem key={item}>{item}</CommandItem>}</CommandCollection>
-            </CommandList>
-          </Command>
-        </div>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', alignItems: 'center' }}>
+          {/* Command has no border/popup behavior of its own by design -- it's meant to sit inside
+              a container that supplies both. Here that container is this Popover: closed, all you
+              see is the trigger button showing the current value (or a placeholder), same as Select;
+              click it and the search input + filtered list appear together in a floating panel,
+              rather than always being rendered inline on the page. */}
+          <Popover open={fruitOpen} onOpenChange={setFruitOpen}>
+            <PopoverTrigger render={<Button variant='outline' className='w-[220px] justify-between font-normal' />}>
+              {fruit || 'Search fruit...'}
+              <ChevronsUpDownIcon className='size-4 shrink-0 opacity-50' />
+            </PopoverTrigger>
+            <PopoverContent align='start' className='w-[220px] p-0'>
+              <Command
+                items={FRUITS}
+                value={fruit}
+                onValueChange={(value) => {
+                  setFruit(value as string)
+                  setFruitOpen(false)
+                }}
+              >
+                <CommandInput placeholder='Search fruit...' />
+                <CommandList>
+                  <CommandEmpty>No results found.</CommandEmpty>
+                  <CommandCollection>
+                    {(item: string) => (
+                      <CommandItem key={item} value={item}>
+                        {item}
+                      </CommandItem>
+                    )}
+                  </CommandCollection>
+                </CommandList>
+              </Command>
+            </PopoverContent>
+          </Popover>
 
-        <Calendar />
+          {/* Same click-to-open pattern for the date picker: the trigger shows the picked date (or a
+              placeholder) and the Calendar itself only renders once the popover is open. */}
+          <Popover open={dateOpen} onOpenChange={setDateOpen}>
+            <PopoverTrigger render={<Button variant='outline' className='w-[220px] justify-start gap-2 font-normal' />}>
+              <CalendarIcon className='size-4 shrink-0 opacity-50' />
+              {date ? format(date, 'PPP') : 'Pick a date'}
+            </PopoverTrigger>
+            <PopoverContent align='start' className='w-auto p-0'>
+              <Calendar
+                className='border-none shadow-none'
+                selected={date}
+                onSelect={(value) => {
+                  setDate(value)
+                  setDateOpen(false)
+                }}
+              />
+            </PopoverContent>
+          </Popover>
+        </div>
 
         <Separator />
 

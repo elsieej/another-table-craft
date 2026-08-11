@@ -7,31 +7,44 @@ import ComponentGalleryExample from '@site/src/components/showcases/ComponentGal
 
 # Component gallery
 
-Every other showcase page demonstrates one capability at a time. This page renders all 16 exported
-primitives together instead -- `Button`, `Badge`, `Card`, `Input`, `Label`, `Checkbox`, `Select` (via the
-[styled components showcase](./styled-components)), `Popover`, `DropdownMenu`, `Tooltip`, `Drawer`,
-`Command`, `Calendar`, `Separator`, and `Skeleton` -- as both a live reference for each one and a check
-that catches a specific class of bug a single-component snippet won't: something breaking across every
-primitive at once (a font, a border color, a dark-mode toggle) rather than just the one being shown.
+Every other showcase page demonstrates one capability at a time. This page renders every Base UI + Tailwind
+primitive the package's source ships together instead -- `Button` and `Select` (the two that are actually
+exported by `another-table-craft`; see [the styled components showcase](./styled-components) for why), plus
+`Badge`, `Popover`, `DropdownMenu`, `Tooltip`, `Drawer`, `Command`, `Calendar`, `Separator`, and `Skeleton`
+-- copied locally into this site rather than imported from the package -- as both a live reference for each
+one and a check that catches a specific class of bug a single-component snippet won't: something breaking
+across every primitive at once (a font, a border color, a dark-mode toggle) rather than just the one being
+shown.
 
 <ComponentGalleryExample />
 
 ```tsx
-import { Button, Badge, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from 'another-table-craft'
+import { Button } from 'another-table-craft'
+// Not exported by the package -- copied locally, see `website/src/components/ui/`.
+import { Badge } from './components/ui/badge'
+import { Popover, PopoverTrigger, PopoverContent } from './components/ui/popover'
+import { Command, CommandInput, CommandList, CommandEmpty, CommandCollection, CommandItem } from './components/ui/command'
 
 <Button>Default</Button>
 <Button variant='outline'>Outline</Button>
 <Badge variant='secondary'>Secondary</Badge>
 
-<Card>
-  <CardHeader>
-    <CardTitle>Card title</CardTitle>
-    <CardDescription>A short card description.</CardDescription>
-  </CardHeader>
-  <CardContent>...</CardContent>
-  <CardFooter>...</CardFooter>
-</Card>
+{/* Command and Calendar have no popup behavior of their own -- a Popover supplies it.
+    Closed, only the trigger button (showing the current value or a placeholder) renders;
+    the search input / month grid only mount once the popover opens. */}
+<Popover>
+  <PopoverTrigger render={<Button variant='outline' />}>Search fruit...</PopoverTrigger>
+  <PopoverContent className='p-0'>
+    <Command items={['Apple', 'Banana']}>
+      <CommandInput placeholder='Search fruit...' />
+      <CommandList>
+        <CommandEmpty>No results found.</CommandEmpty>
+        <CommandCollection>{(item) => <CommandItem key={item} value={item}>{item}</CommandItem>}</CommandCollection>
+      </CommandList>
+    </Command>
+  </PopoverContent>
+</Popover>
 ```
 
-Open the popover, dropdown, and drawer -- each renders through a portal outside this page's own DOM
-subtree, which is exactly the kind of thing a CSS change can silently miss.
+Open the popover, dropdown, drawer, search-fruit combobox, and date picker -- each renders through a portal
+outside this page's own DOM subtree, which is exactly the kind of thing a CSS change can silently miss.
