@@ -10,12 +10,16 @@ function Command({ ...props }: ComponentProps<typeof ComboboxPrimitive.Root>) {
 
 function CommandInput({ className, ...props }: ComponentProps<typeof ComboboxPrimitive.Input>) {
   return (
-    <div data-slot='command-input-wrapper' className='flex h-9 items-center gap-2 border-b px-3'>
-      <SearchIcon className='size-4 shrink-0 opacity-50' />
+    <div data-slot='command-input-wrapper' className='flex h-9 items-center gap-2 border-b border-border px-3'>
+      <SearchIcon className='size-4 shrink-0 text-muted-foreground' />
+      {/* A consuming host that hasn't loaded Preflight (e.g. a Docusaurus site sharing layers with
+          Infima) leaves a bare `<input>` with that host's default form-control border/radius.
+          `border-0` overrides it -- without it the input gets a second, mismatched box drawn
+          around it, layered on top of this wrapper's own border-b. */}
       <ComboboxPrimitive.Input
         data-slot='command-input'
         className={cn(
-          'flex h-10 w-full rounded-md bg-transparent py-3 text-sm outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
+          'flex h-9 w-full min-w-0 border-0 bg-transparent p-0 text-[13px] text-foreground outline-none placeholder:text-muted-foreground disabled:cursor-not-allowed disabled:opacity-50',
           className
         )}
         {...props}
