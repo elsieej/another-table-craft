@@ -1,0 +1,37 @@
+---
+sidebar_position: 1.6
+sidebar_label: Component gallery
+---
+
+import ComponentGalleryExample from '@site/src/components/showcases/ComponentGalleryExample'
+
+# Component gallery
+
+Every other showcase page demonstrates one capability at a time. This page renders all 16 exported
+primitives together instead -- `Button`, `Badge`, `Card`, `Input`, `Label`, `Checkbox`, `Select` (via the
+[styled components showcase](./styled-components)), `Popover`, `DropdownMenu`, `Tooltip`, `Drawer`,
+`Command`, `Calendar`, `Separator`, and `Skeleton` -- as both a live reference for each one and a check
+that catches a specific class of bug a single-component snippet won't: something breaking across every
+primitive at once (a font, a border color, a dark-mode toggle) rather than just the one being shown.
+
+<ComponentGalleryExample />
+
+```tsx
+import { Button, Badge, Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from 'another-table-craft'
+
+<Button>Default</Button>
+<Button variant='outline'>Outline</Button>
+<Badge variant='secondary'>Secondary</Badge>
+
+<Card>
+  <CardHeader>
+    <CardTitle>Card title</CardTitle>
+    <CardDescription>A short card description.</CardDescription>
+  </CardHeader>
+  <CardContent>...</CardContent>
+  <CardFooter>...</CardFooter>
+</Card>
+```
+
+Open the popover, dropdown, and drawer -- each renders through a portal outside this page's own DOM
+subtree, which is exactly the kind of thing a CSS change can silently miss.
