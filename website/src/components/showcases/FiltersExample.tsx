@@ -44,7 +44,9 @@ export default function FiltersExample(): ReactNode {
               value={roleFilter}
               onValueChange={(value) => setColumnFilter('role', value === 'all' ? undefined : value)}
             >
-              <SelectTrigger className='w-[160px]' aria-label='Filter by role'>
+              {/* width via inline style, not a `w-[160px]` class -- see ResponsiveExample.tsx for why
+                  a one-off arbitrary-value class used only in this file wouldn't compile at all. */}
+              <SelectTrigger style={{ width: 160 }} aria-label='Filter by role'>
                 {/* Explicit children, not a bare `placeholder`: Base UI's own value->label resolution only
                     works when an item's value and its rendered label are the same string (true for every
                     role here, but not for the 'all' sentinel), so it silently falls back to showing the

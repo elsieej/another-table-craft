@@ -89,11 +89,17 @@ export default function ComponentGalleryExample(): ReactNode {
               click it and the search input + filtered list appear together in a floating panel,
               rather than always being rendered inline on the page. */}
           <Popover open={fruitOpen} onOpenChange={setFruitOpen}>
-            <PopoverTrigger render={<Button variant='outline' className='w-[220px] justify-between font-normal' />}>
+            {/* width via inline style, not a `w-[220px]` class: this site has no Tailwind build of its
+                own -- its utility classes all come from the package's precompiled styles.css, which
+                only contains classes that appear somewhere in the package's own source. A class used
+                only here would silently compile to nothing. */}
+            <PopoverTrigger
+              render={<Button variant='outline' className='justify-between font-normal' style={{ width: 220 }} />}
+            >
               {fruit || 'Search fruit...'}
               <ChevronsUpDownIcon className='size-4 shrink-0 opacity-50' />
             </PopoverTrigger>
-            <PopoverContent align='start' className='w-[220px] p-0'>
+            <PopoverContent align='start' className='p-0' style={{ width: 220 }}>
               <Command
                 items={FRUITS}
                 value={fruit}
@@ -122,14 +128,22 @@ export default function ComponentGalleryExample(): ReactNode {
               open. mode='range' turns day clicks into a two-step pick: the first click sets the
               start, the second sets the end -- the popover closes once both are set. */}
           <Popover open={dateOpen} onOpenChange={setDateOpen}>
-            <PopoverTrigger render={<Button variant='outline' className='w-[260px] justify-start gap-2 font-normal' />}>
+            <PopoverTrigger
+              render={
+                <Button
+                  variant='outline'
+                  className='font-normal'
+                  style={{ width: 260, justifyContent: 'flex-start' }}
+                />
+              }
+            >
               <CalendarIcon className='size-4 shrink-0 text-muted-foreground' />
               {formatDateRange(dateRange)}
             </PopoverTrigger>
-            <PopoverContent align='start' className='w-auto p-0'>
+            <PopoverContent align='start' className='p-0' style={{ width: 'auto' }}>
               <Calendar
                 mode='range'
-                className='border-none shadow-none'
+                style={{ border: 'none', boxShadow: 'none' }}
                 selected={dateRange}
                 onSelect={(range) => {
                   setDateRange(range)

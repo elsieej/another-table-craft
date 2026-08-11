@@ -59,7 +59,7 @@ function CheckboxGroup({
   prefix: string
 }) {
   return (
-    <fieldset className='m-0 flex min-w-40 flex-col gap-1.5 border-0 p-0'>
+    <fieldset className='m-0 flex flex-col gap-1.5 border-0 p-0' style={{ minWidth: 160 }}>
       <legend className='mb-1 text-[13px] font-medium text-foreground'>{legend}</legend>
       {options.map((option) => {
         const id = `${prefix}-${option}`

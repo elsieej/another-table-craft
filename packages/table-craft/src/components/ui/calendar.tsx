@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, type CSSProperties } from 'react'
 import {
   addMonths,
   eachDayOfInterval,
@@ -27,6 +27,7 @@ export interface DateRange {
 
 interface CalendarBaseProps {
   className?: string
+  style?: CSSProperties
   month?: Date
   defaultMonth?: Date
   onMonthChange?: (month: Date) => void
@@ -48,7 +49,7 @@ interface CalendarRangeProps extends CalendarBaseProps {
 type CalendarProps = CalendarSingleProps | CalendarRangeProps
 
 function Calendar(props: CalendarProps) {
-  const { className, month: monthProp, defaultMonth = new Date(), onMonthChange, disabled } = props
+  const { className, style, month: monthProp, defaultMonth = new Date(), onMonthChange, disabled } = props
   const [internalMonth, setInternalMonth] = useState(defaultMonth)
   const month = monthProp ?? internalMonth
 
@@ -86,6 +87,7 @@ function Calendar(props: CalendarProps) {
     <div
       data-slot='calendar'
       className={cn('w-fit rounded-[10px] border bg-card p-3 text-card-foreground shadow-sm', className)}
+      style={style}
     >
       <div className='flex items-center justify-between pb-4'>
         <Button
