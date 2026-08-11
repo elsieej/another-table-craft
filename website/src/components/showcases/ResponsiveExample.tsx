@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { Button, createMemoryStateStore, useTableCraft } from 'another-table-craft'
-import { FilterIcon } from 'lucide-react'
+import { Button, createMemoryStateStore, useTableCraft, ViewToggle } from 'another-table-craft'
+import { FilterIcon, LayoutGridIcon, TableIcon } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '../ui/card'
 import {
   Drawer,
@@ -34,8 +34,7 @@ const FRAMES = [
   { label: 'Desktop', width: undefined }
 ] as const
 
-const VIEWS = ['Table', 'Card'] as const
-type View = (typeof VIEWS)[number]
+type View = 'Table' | 'Card'
 
 export default function ResponsiveExample(): ReactNode {
   const [frame, setFrame] = useState<(typeof FRAMES)[number]>(FRAMES[0])
@@ -48,14 +47,30 @@ export default function ResponsiveExample(): ReactNode {
   // a page with column filters too would sum however many of those are set as well.
   const activeFilterCount = state.globalFilter ? 1 : 0
 
-  const searchField = (
-    <SearchInput
-      placeholder='Search all columns…'
-      aria-label='Global filter'
-      value={state.globalFilter}
-      onChange={(event) => setGlobalFilter(event.target.value)}
-      onClear={() => setGlobalFilter('')}
-      className='w-full'
+  function renderSearchField(className?: string) {
+    return (
+      <SearchInput
+        placeholder='Search all columns…'
+        aria-label='Global filter'
+        value={state.globalFilter}
+        onChange={(event) => setGlobalFilter(event.target.value)}
+        onClear={() => setGlobalFilter('')}
+        className={className}
+      />
+    )
+  }
+
+  // Segmented Table/Cards control -- lives in the toolbar next to search (Tablet/Desktop) or next
+  // to the filter button (Mobile), matching the design system's toolbar layout rather than
+  // floating above the table as its own row of buttons.
+  const viewToggle = (
+    <ViewToggle
+      value={view}
+      onValueChange={setView}
+      options={[
+        { value: 'Table', label: 'Table', icon: <TableIcon /> },
+        { value: 'Card', label: 'Cards', icon: <LayoutGridIcon /> }
+      ]}
     />
   )
 
@@ -65,62 +80,67 @@ export default function ResponsiveExample(): ReactNode {
   // Tooltip explains the icon on hover/focus, and the actual field moves into a Drawer opened by
   // that same button. Tablet/Desktop have room, so they just show the field inline, same as every
   // other showcase's toolbar.
+  const filterButton = (
+    <Drawer>
+      <Tooltip>
+        <TooltipTrigger
+          render={
+            <DrawerTrigger
+              render={
+                <Button type='button' variant='outline' size='icon' className='relative' aria-label='Open filters' />
+              }
+            />
+          }
+        >
+          <FilterIcon className='size-4' />
+          {activeFilterCount > 0 ? (
+            // Inline style, not Tailwind classes, for the size/offset here: this site has no Tailwind
+            // build of its own -- every utility class it uses comes from the package's precompiled
+            // styles.css, which only contains classes that appear somewhere in the package's own
+            // source (see the `@source` comment in packages/table-craft/src/styles/theme.css). A class
+            // that exists only in this showcase file (like a one-off `-top-1.5` or `min-w-4`) silently
+            // compiles to nothing.
+            <span
+              className='absolute flex items-center justify-center rounded-full bg-primary font-medium text-primary-foreground'
+              style={{
+                top: -6,
+                right: -6,
+                height: 16,
+                minWidth: 16,
+                padding: '0 4px',
+                fontSize: 10,
+                lineHeight: '16px'
+              }}
+            >
+              {activeFilterCount}
+            </span>
+          ) : null}
+        </TooltipTrigger>
+        <TooltipContent>{activeFilterCount > 0 ? `${activeFilterCount} filter active` : 'Filters'}</TooltipContent>
+      </Tooltip>
+      <DrawerContent>
+        <DrawerHeader>
+          <DrawerTitle>Filters</DrawerTitle>
+          <DrawerDescription>Search across every column.</DrawerDescription>
+        </DrawerHeader>
+        <div className='px-4 pb-4'>{renderSearchField('w-full')}</div>
+        <DrawerFooter>
+          <DrawerClose render={<Button variant='outline' />}>Done</DrawerClose>
+        </DrawerFooter>
+      </DrawerContent>
+    </Drawer>
+  )
+
   const toolbar = isMobile ? (
     <div className='flex items-center justify-between gap-3'>
-      <span className='text-[13px] text-muted-foreground'>
-        {activeFilterCount > 0 ? `${activeFilterCount} filter active` : 'No filters applied'}
-      </span>
-      <Drawer>
-        <Tooltip>
-          <TooltipTrigger
-            render={
-              <DrawerTrigger
-                render={
-                  <Button type='button' variant='outline' size='icon' className='relative' aria-label='Open filters' />
-                }
-              />
-            }
-          >
-            <FilterIcon className='size-4' />
-            {activeFilterCount > 0 ? (
-              // Inline style, not Tailwind classes, for the size/offset here: this site has no Tailwind
-              // build of its own -- every utility class it uses comes from the package's precompiled
-              // styles.css, which only contains classes that appear somewhere in the package's own
-              // source (see the `@source` comment in packages/table-craft/src/styles/theme.css). A class
-              // that exists only in this showcase file (like a one-off `-top-1.5` or `min-w-4`) silently
-              // compiles to nothing.
-              <span
-                className='absolute flex items-center justify-center rounded-full bg-primary font-medium text-primary-foreground'
-                style={{
-                  top: -6,
-                  right: -6,
-                  height: 16,
-                  minWidth: 16,
-                  padding: '0 4px',
-                  fontSize: 10,
-                  lineHeight: '16px'
-                }}
-              >
-                {activeFilterCount}
-              </span>
-            ) : null}
-          </TooltipTrigger>
-          <TooltipContent>{activeFilterCount > 0 ? `${activeFilterCount} filter active` : 'Filters'}</TooltipContent>
-        </Tooltip>
-        <DrawerContent>
-          <DrawerHeader>
-            <DrawerTitle>Filters</DrawerTitle>
-            <DrawerDescription>Search across every column.</DrawerDescription>
-          </DrawerHeader>
-          <div className='px-4 pb-4'>{searchField}</div>
-          <DrawerFooter>
-            <DrawerClose render={<Button variant='outline' />}>Done</DrawerClose>
-          </DrawerFooter>
-        </DrawerContent>
-      </Drawer>
+      {filterButton}
+      {viewToggle}
     </div>
   ) : (
-    searchField
+    <div className='flex flex-wrap items-center justify-between gap-3'>
+      {renderSearchField()}
+      {viewToggle}
+    </div>
   )
 
   return (
@@ -137,20 +157,6 @@ export default function ResponsiveExample(): ReactNode {
             >
               {candidate.label}
               {candidate.width ? ` (${candidate.width}px)` : ''}
-            </Button>
-          ))}
-        </div>
-
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem' }}>
-          {VIEWS.map((candidate) => (
-            <Button
-              key={candidate}
-              type='button'
-              size='sm'
-              variant={candidate === view ? 'default' : 'outline'}
-              onClick={() => setView(candidate)}
-            >
-              {candidate} view
             </Button>
           ))}
         </div>
