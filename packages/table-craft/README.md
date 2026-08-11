@@ -68,9 +68,12 @@ By default, `useTableCraft` reads and writes pagination/sorting/filter state to 
 The plain `<table>` above works, but the package also ships the Base UI + Tailwind components it's built with, wired to `useTableCraft`'s `table` instance:
 
 ```tsx
-import { useTableCraft, Card, CardFooter, DataTable, DataTablePagination } from 'another-table-craft'
+import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
 // once, anywhere in your app
 import 'another-table-craft/styles.css'
+// Card isn't exported by the package — bring your own, or copy `src/components/ui/card.tsx`
+// into your app (see "What's exported" below).
+import { Card, CardFooter } from './components/ui/card'
 
 function PeopleTable({ data }: { data: Person[] }) {
   const { table } = useTableCraft({ data, columns })
@@ -88,7 +91,7 @@ function PeopleTable({ data }: { data: Person[] }) {
 
 - `DataTable` renders sortable headers (pass `sortable={false}` to force plain, non-interactive headers) and rows from the `table` instance, with an empty-state row.
 - `DataTablePagination` renders Previous/Next and a page-size `Select`, wired to the table's own `setPageSize`/`previousPage`/`nextPage`.
-- Both are built from lower-level primitives (`Button`, `Table`, `Select`, `Badge`, `Card`, and more) also exported individually from the package root, for consumers who want to assemble their own layout instead.
+- Both are built from `Button`, `Table`, and `Select`, the only lower-level primitives the package exports from its root. Everything else under `src/components/ui/` (`Badge`, `Card`, `Checkbox`, `DropdownMenu`, `Popover`, `Tooltip`, `Skeleton`, `Separator`, `Label`, `Command`, `Calendar`, `Drawer`, ...) is a Base UI + Tailwind recipe you're meant to copy into your own app and adjust, not an exported dependency — the same idea as the shadcn CLI.
 - Dark mode follows either a `.dark` class or a `data-theme="dark"` attribute on an ancestor element (e.g. `<html>`) — pick whichever your app already toggles.
 - `another-table-craft/styles.css` is precompiled at publish time; it doesn't require Tailwind or PostCSS in the consuming app.
 

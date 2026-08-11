@@ -7,9 +7,9 @@ import {
   SelectContent,
   SelectItem,
   SelectTrigger,
-  SelectValue,
-  SearchInput
+  SelectValue
 } from 'another-table-craft'
+import { SearchInput } from '../ui/search-input'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { PaginationFooter } from './PaginationFooter'

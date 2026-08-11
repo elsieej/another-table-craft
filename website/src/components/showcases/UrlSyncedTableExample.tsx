@@ -1,6 +1,7 @@
 import { type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { SearchInput, useTableCraft } from 'another-table-craft'
+import { useTableCraft } from 'another-table-craft'
+import { SearchInput } from '../ui/search-input'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { PaginationFooter } from './PaginationFooter'

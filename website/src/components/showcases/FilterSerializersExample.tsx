@@ -1,12 +1,10 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import {
-  Checkbox,
   commaSeparated,
   createDelimited,
   createUrlStateStore,
   dotSeparated,
-  Label,
   multiKey,
   pipeSeparated,
   Select,
@@ -17,6 +15,8 @@ import {
   useTableCraft,
   type FilterSerializer
 } from 'another-table-craft'
+import { Checkbox } from '../ui/checkbox'
+import { Label } from '../ui/label'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { PaginationFooter } from './PaginationFooter'

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { createMemoryStateStore, SearchInput, useTableCraft } from 'another-table-craft'
+import { createMemoryStateStore, useTableCraft } from 'another-table-craft'
+import { SearchInput } from '../ui/search-input'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { PaginationFooter } from './PaginationFooter'

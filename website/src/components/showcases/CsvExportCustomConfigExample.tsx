@@ -1,6 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import { Button, Checkbox, createMemoryStateStore, exportSelectedRowsCsv, useTableCraft } from 'another-table-craft'
+import { Button, createMemoryStateStore, exportSelectedRowsCsv, useTableCraft } from 'another-table-craft'
+import { Checkbox } from '../ui/checkbox'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { PaginationFooter } from './PaginationFooter'

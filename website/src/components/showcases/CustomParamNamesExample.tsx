@@ -2,7 +2,6 @@ import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import {
   createUrlStateStore,
-  Label,
   Select,
   SelectContent,
   SelectItem,
@@ -10,6 +9,7 @@ import {
   SelectValue,
   useTableCraft
 } from 'another-table-craft'
+import { Label } from '../ui/label'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { PaginationFooter } from './PaginationFooter'

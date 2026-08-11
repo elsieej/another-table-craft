@@ -3,13 +3,13 @@ import { type ColumnDef } from '@tanstack/react-table'
 import {
   Button,
   createMemoryStateStore,
-  SearchInput,
   TableProvider,
   useTableConfig,
   useTableCraft,
   useTableTranslations,
   type TableConfigInput
 } from 'another-table-craft'
+import { SearchInput } from '../ui/search-input'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 

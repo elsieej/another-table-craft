@@ -14,9 +14,12 @@ to build your own presentation layer to get a table that looks like this:
 <StyledComponentsExample />
 
 ```tsx
-import { useTableCraft, Card, CardFooter, DataTable, DataTablePagination } from 'another-table-craft'
+import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
 // once, anywhere in your app
 import 'another-table-craft/styles.css'
+// Card isn't exported by the package (see "What's exported" below) — bring your own, or copy
+// this site's local one from `website/src/components/ui/card.tsx`.
+import { Card, CardFooter } from './components/ui/card'
 
 function PeopleTable({ data }: { data: Person[] }) {
   const { table } = useTableCraft({ data, columns })
@@ -42,10 +45,13 @@ function PeopleTable({ data }: { data: Person[] }) {
 - **`DataTablePagination`** — Previous/Next buttons and a page-size `Select`, wired to the table's own
   `setPageSize`/`previousPage`/`nextPage`. Both components take a plain TanStack `Table<TData>`, so they compose
   with `useTableCraft` but don't require it.
-- **Lower-level primitives** — `Button`, `Table` (and `TableHeader`/`TableBody`/`TableRow`/`TableCell`/...),
-  `Select`, `Badge`, `Card`, `Input`, `Checkbox`, `DropdownMenu`, `Popover`, `Tooltip`, `Skeleton`, `Separator`,
-  `Label`, `Command`, `Calendar`, and `Drawer` are all exported individually too, for building a custom layout
-  instead of using `DataTable` directly.
+- **`Button`, `Select`, `Table`** (and their subparts) — the only presentation primitives the package exports.
+  `DataTable` and `DataTablePagination` are built on these, so they ship as part of the public API.
+- **Everything else is a recipe, not a dependency** — `Badge`, `Card`, `Input`, `Checkbox`, `DropdownMenu`,
+  `Popover`, `Tooltip`, `Skeleton`, `Separator`, `Label`, `Command`, `Calendar`, and `Drawer` are Base UI +
+  Tailwind components this docs site itself uses (see [the component gallery](./component-gallery)), but the
+  package doesn't export or version them. Copy their source from `packages/table-craft/src/components/ui/`
+  into your own app and adjust as needed, the same way you'd add a component with the shadcn CLI.
 
 ## Styling
 

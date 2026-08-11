@@ -2,8 +2,6 @@ import { useMemo, useState, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
 import {
   createUrlStateStore,
-  Label,
-  SearchInput,
   Select,
   SelectContent,
   SelectItem,
@@ -11,6 +9,8 @@ import {
   SelectValue,
   useTableCraft
 } from 'another-table-craft'
+import { Label } from '../ui/label'
+import { SearchInput } from '../ui/search-input'
 import { people, type Person } from '../../data/people'
 import { TableCard } from './TableCard'
 import { useLiveLocationSearch } from '../../hooks/useLiveLocationSearch'

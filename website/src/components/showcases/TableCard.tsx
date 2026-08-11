@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react'
 import type { Table } from '@tanstack/react-table'
-import { Card, CardFooter, DataTable } from 'another-table-craft'
+import { DataTable } from 'another-table-craft'
+import { Card, CardFooter } from '../ui/card'
 
 interface TableCardProps<TData> {
   table: Table<TData>

@@ -1,13 +1,7 @@
 import { useMemo, type ReactNode } from 'react'
 import { type ColumnDef } from '@tanstack/react-table'
-import {
-  createMemoryStateStore,
-  useTableCraft,
-  Card,
-  CardFooter,
-  DataTable,
-  DataTablePagination
-} from 'another-table-craft'
+import { createMemoryStateStore, useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+import { Card, CardFooter } from '../ui/card'
 import { people, type Person } from '../../data/people'
 
 const columns: ColumnDef<Person>[] = [
