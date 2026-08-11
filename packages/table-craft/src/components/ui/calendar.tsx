@@ -148,7 +148,7 @@ function Calendar(props: CalendarProps) {
               data-today={isCurrentDay ? '' : undefined}
               onClick={() => handleDayClick(day)}
               className={cn(
-                'relative flex size-8 items-center justify-center rounded-full border-0 bg-transparent p-0 text-sm font-normal outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40 data-outside:text-muted-foreground/60 data-selected:bg-primary data-selected:font-semibold data-selected:text-primary-foreground data-selected:hover:bg-primary data-range-middle:bg-accent data-range-middle:text-accent-foreground data-today:font-semibold data-today:text-primary',
+                'relative flex size-8 items-center justify-center rounded-full border-0 bg-transparent p-0 text-sm font-normal outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40 data-outside:text-muted-foreground/60 data-selected:bg-primary data-selected:font-semibold data-selected:text-primary-foreground data-selected:hover:bg-primary data-range-middle:bg-accent data-range-middle:text-accent-foreground data-today:font-semibold',
                 isCurrentDay &&
                   !isSelected &&
                   'after:absolute after:bottom-1 after:size-1 after:rounded-full after:bg-primary after:content-[""]'
