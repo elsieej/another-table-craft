@@ -52,7 +52,10 @@ function Calendar({
   const days = eachDayOfInterval({ start: gridStart, end: gridEnd })
 
   return (
-    <div data-slot='calendar' className={cn('w-fit p-3', className)}>
+    <div
+      data-slot='calendar'
+      className={cn('w-fit rounded-[10px] border bg-card p-3 text-card-foreground shadow-sm', className)}
+    >
       <div className='flex items-center justify-between pb-4'>
         <Button
           type='button'
@@ -64,7 +67,7 @@ function Calendar({
         >
           <ChevronLeftIcon className='size-4' />
         </Button>
-        <div className='text-sm font-medium' aria-live='polite'>
+        <div className='text-sm font-semibold' aria-live='polite'>
           {format(month, 'MMMM yyyy')}
         </div>
         <Button
@@ -80,7 +83,10 @@ function Calendar({
       </div>
       <div role='grid' className='grid grid-cols-7 gap-1'>
         {WEEKDAY_LABELS.map((label) => (
-          <div key={label} className='text-center text-xs font-normal text-muted-foreground'>
+          <div
+            key={label}
+            className='flex size-8 items-center justify-center text-xs font-medium text-muted-foreground'
+          >
             {label}
           </div>
         ))}
@@ -88,6 +94,7 @@ function Calendar({
           const isSelected = selected ? isSameDay(day, selected) : false
           const isOutside = !isSameMonth(day, month)
           const isDisabled = disabled?.(day) ?? false
+          const isCurrentDay = isToday(day)
           return (
             <button
               key={day.toISOString()}
@@ -95,13 +102,16 @@ function Calendar({
               role='gridcell'
               disabled={isDisabled}
               aria-selected={isSelected}
-              aria-current={isToday(day) ? 'date' : undefined}
+              aria-current={isCurrentDay ? 'date' : undefined}
               data-selected={isSelected ? '' : undefined}
               data-outside={isOutside ? '' : undefined}
-              data-today={isToday(day) ? '' : undefined}
+              data-today={isCurrentDay ? '' : undefined}
               onClick={() => onSelect?.(day)}
               className={cn(
-                'flex size-8 items-center justify-center rounded-md p-0 text-sm font-normal transition-colors outline-none hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-50 data-outside:text-muted-foreground data-selected:bg-primary data-selected:text-primary-foreground data-selected:hover:bg-primary data-today:font-semibold'
+                'relative flex size-8 items-center justify-center rounded-full p-0 text-sm font-normal outline-none transition-colors hover:bg-accent hover:text-accent-foreground focus-visible:ring-[3px] focus-visible:ring-ring/50 disabled:pointer-events-none disabled:opacity-40 data-outside:text-muted-foreground/60 data-selected:bg-primary data-selected:font-semibold data-selected:text-primary-foreground data-selected:hover:bg-primary data-today:font-semibold data-today:text-primary',
+                isCurrentDay &&
+                  !isSelected &&
+                  'after:absolute after:bottom-1 after:size-1 after:rounded-full after:bg-primary after:content-[""]'
               )}
             >
               {format(day, 'd')}
