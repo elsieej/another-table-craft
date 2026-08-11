@@ -1,0 +1,47 @@
+---
+sidebar_position: 1.7
+sidebar_label: Responsive layout
+---
+
+import ResponsiveExample from '@site/src/components/showcases/ResponsiveExample'
+
+# Responsive layout
+
+There's no separate "mobile" mode to opt into -- narrow viewports get the same table, toolbar, and pagination
+footer as anything else, and they hold up because of a few small, unconditional layout choices rather than a
+breakpoint switch:
+
+- **`Table`'s own wrapper is `overflow-x-auto`.** A row of columns that doesn't fit scrolls horizontally
+  inside the card instead of squeezing every column or breaking the page's own layout.
+- **The toolbar and footer wrap.** `DataTablePagination` is `flex flex-wrap` -- rows-per-page and the page
+  buttons drop to their own line once they no longer fit one.
+- **Nothing measures the viewport.** All of this is plain CSS: no `matchMedia`, no resize listener, no
+  client-side breakpoint state to get out of sync with what actually rendered.
+
+Use the buttons below to preview the table at a few frame widths without resizing your own window --
+they just set a `max-width` on a wrapper div, the same constraint a real phone or tablet viewport would
+impose:
+
+<ResponsiveExample />
+
+```tsx
+import { useTableCraft, DataTable, DataTablePagination } from 'another-table-craft'
+import { Card, CardFooter } from './components/ui/card'
+
+// No responsive-specific props anywhere here -- the same table works at any width.
+function PeopleTable({ data }: { data: Person[] }) {
+  const { table } = useTableCraft({ data, columns })
+
+  return (
+    <Card>
+      <DataTable table={table} />
+      <CardFooter>
+        <DataTablePagination table={table} className='w-full' />
+      </CardFooter>
+    </Card>
+  )
+}
+```
+
+Try the **Mobile** frame, then open the **Rows per page** select or tap a page number -- every control stays
+reachable and correctly sized (no accidental tap targets shrunk below 32px), it just rewraps.
