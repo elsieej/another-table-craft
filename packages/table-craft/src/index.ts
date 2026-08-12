@@ -38,6 +38,7 @@ export type { DataTablePaginationProps } from './components/data-table-paginatio
 // UI primitives (Base UI + Tailwind) used internally by DataTable / DataTablePagination.
 // Pair with the `./styles.css` export.
 export { Button, buttonVariants } from './components/ui/button'
+export { Separator } from './components/ui/separator'
 export { ViewToggle } from './components/ui/view-toggle'
 export type { ViewToggleOption, ViewToggleProps } from './components/ui/view-toggle'
 export {

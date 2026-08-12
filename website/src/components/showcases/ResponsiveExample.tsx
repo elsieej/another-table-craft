@@ -44,7 +44,7 @@ const CARD_COLUMN_OPTIONS = [1, 2, 3, 4] as const
 export default function ResponsiveExample(): ReactNode {
   const [frame, setFrame] = useState<(typeof FRAMES)[number]>(FRAMES[0])
   const [view, setView] = useState<View>('Table')
-  const [cardColumns, setCardColumns] = useState<(typeof CARD_COLUMN_OPTIONS)[number]>(2)
+  const [cardColumns, setCardColumns] = useState<number>(2)
   const store = useMemo(() => createMemoryStateStore({ pagination: { pageIndex: 0, pageSize: 5 } }), [])
   const { table, state, setGlobalFilter } = useTableCraft({ data: people, columns, store })
 
@@ -168,23 +168,6 @@ export default function ResponsiveExample(): ReactNode {
           ))}
         </div>
 
-        {view === 'Card' ? (
-          <div style={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center', gap: '0.5rem' }}>
-            <span className='text-[13px] text-muted-foreground'>Columns:</span>
-            {CARD_COLUMN_OPTIONS.map((count) => (
-              <Button
-                key={count}
-                type='button'
-                size='sm'
-                variant={count === cardColumns ? 'default' : 'outline'}
-                onClick={() => setCardColumns(count)}
-              >
-                {count}
-              </Button>
-            ))}
-          </div>
-        ) : null}
-
         {/* This border is only here to make the chosen frame width visible on the page -- the
             scrolling behavior itself comes from Table's own wrapper (overflow-x-auto), which is
             exactly what a real narrow viewport gets too, framed or not. */}
@@ -201,7 +184,7 @@ export default function ResponsiveExample(): ReactNode {
             <TableCard table={table} toolbar={toolbar} footer={<PaginationFooter table={table} />} />
           ) : (
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-              <div className='rounded-[10px] border bg-card px-2 py-4'>{toolbar}</div>
+              <div className='rounded-[10px] border border-border bg-card px-2 py-4'>{toolbar}</div>
               <div
                 style={{
                   display: 'grid',
@@ -228,8 +211,13 @@ export default function ResponsiveExample(): ReactNode {
                   </Card>
                 ))}
               </div>
-              <div className='rounded-[10px] border bg-card px-2 py-3'>
-                <PaginationFooter table={table} />
+              <div className='rounded-[10px] border border-border bg-card px-2 py-3'>
+                <PaginationFooter
+                  table={table}
+                  cardColumns={cardColumns}
+                  onCardColumnsChange={setCardColumns}
+                  cardColumnOptions={[...CARD_COLUMN_OPTIONS]}
+                />
               </div>
             </div>
           )}
