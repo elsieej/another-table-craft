@@ -38,17 +38,15 @@ export default function CsvExportDefaultsExample(): ReactNode {
     <TableCard
       table={table}
       sortable={false}
-      footer={
-        <>
-          <PaginationFooter table={table} />
-          <div className='flex items-center gap-3'>
-            <span className='text-[13px] text-muted-foreground'>{selectedCount} selected</span>
-            <Button size='sm' onClick={() => exportSelectedRowsCsv(table)} disabled={selectedCount === 0}>
-              Export CSV
-            </Button>
-          </div>
-        </>
+      toolbar={
+        <div className='flex items-center justify-end gap-3'>
+          <span className='text-[13px] text-muted-foreground'>{selectedCount} selected</span>
+          <Button size='sm' onClick={() => exportSelectedRowsCsv(table)} disabled={selectedCount === 0}>
+            Export CSV
+          </Button>
+        </div>
       }
+      footer={<PaginationFooter table={table} />}
     />
   )
 }
